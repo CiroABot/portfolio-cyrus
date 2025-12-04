@@ -1,0 +1,192 @@
+import React, { useEffect, useState } from 'react';
+import Lenis from '@studio-freight/lenis';
+import { Helmet } from 'react-helmet-async'; // Import Helmet for SEO
+import { LanguageProvider, useLanguage } from './LanguageContext';
+import Cursor from './components/Cursor';
+import Sidebar from './components/Sidebar';
+import Hero from './components/Hero';
+import Films from './components/Films';
+import Projects from './components/Projects';
+import Footer from './components/Footer';
+import Modal from './components/Modal';
+import ZineGallery from './components/ZineGallery';
+import { FilmData } from './types';
+import { filmsData } from './data'; // Import data for SEO generation
+
+const NoiseOverlay: React.FC = () => (
+  <div className="fixed top-0 left-0 w-full h-screen z-[9995] pointer-events-none opacity-[0.48] mix-blend-overlay select-none">
+     <svg className="w-full h-full block">
+        <filter id="grain">
+            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+        </filter>
+        <rect width="100%" height="100%" filter="url(#grain)" />
+    </svg>
+  </div>
+);
+
+const MarqueeStrip: React.FC = () => {
+    const { t } = useLanguage();
+    return (
+        // z-index updated to 40 to sit above Films section bg (z-10/20)
+        <div className="relative w-[110vw] left-[50%] -ml-[55vw] bg-black text-yellow border-y-3 border-black py-3 overflow-hidden whitespace-nowrap z-40 -mb-10 shadow-[0px_10px_20px_rgba(0,0,0,0.3)] rotate-1 flex pointer-events-none">
+            <div className="animate-scroll-text flex-shrink-0 pr-12 font-bold text-xl uppercase tracking-widest">{t.marquee_text}</div>
+            <div className="animate-scroll-text flex-shrink-0 pr-12 font-bold text-xl uppercase tracking-widest">{t.marquee_text}</div>
+        </div>
+    );
+}
+
+// SEO Component to inject JSON-LD
+const StructuredData: React.FC = () => {
+    const { lang } = useLanguage();
+    const films = filmsData(lang);
+
+    const schemaData = films
+        .filter(film => film.videoEmbed) // Only films with video
+        .map(film => ({
+            "@context": "https://schema.org",
+            "@type": "VideoObject",
+            "name": film.title,
+            "description": film.desc,
+            "thumbnailUrl": [film.img],
+            "uploadDate": `${film.year}-01-01`, // Approx date
+            "duration": film.specs?.runtime ? `PT${film.specs.runtime.replace(' min', 'M')}` : undefined,
+            "embedUrl": film.videoEmbed
+        }));
+
+    return (
+        <Helmet>
+            {schemaData.map((data, index) => (
+                <script key={index} type="application/ld+json">
+                    {JSON.stringify(data)}
+                </script>
+            ))}
+        </Helmet>
+    );
+};
+
+const AppContent: React.FC = () => {
+  const { lang } = useLanguage();
+  const [activeSection, setActiveSection] = useState('home');
+  const [modalData, setModalData] = useState<FilmData | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isZineOpen, setIsZineOpen] = useState(false);
+  const [cinemaUrl, setCinemaUrl] = useState<string>('');
+  const [isCinemaMode, setIsCinemaMode] = useState(false);
+
+  useEffect(() => {
+    // Initialize Lenis Smooth Scroll
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    });
+
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    // Scroll Spy Logic
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if(entry.isIntersecting) {
+                setActiveSection(entry.target.id);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('header, section, footer').forEach(section => {
+        observer.observe(section);
+    });
+
+    // Reveal on scroll
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('opacity-100', 'translate-y-0');
+                entry.target.classList.remove('opacity-0', 'translate-y-20');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal-on-scroll').forEach(el => {
+        el.classList.add('transition-all', 'duration-1000', 'ease-out', 'opacity-0', 'translate-y-20');
+        revealObserver.observe(el);
+    });
+
+    // Stop scrolling when modal is open
+    if (isModalOpen || isZineOpen) {
+        lenis.stop();
+        document.body.style.overflow = 'hidden';
+    } else {
+        lenis.start();
+        document.body.style.overflow = 'auto';
+    }
+
+    return () => {
+        lenis.destroy();
+        observer.disconnect();
+        revealObserver.disconnect();
+    };
+  }, [isModalOpen, isZineOpen]);
+
+  // Handlers
+  const handleOpenFilm = (film: FilmData) => {
+    setModalData(film);
+    setIsCinemaMode(false);
+    setIsModalOpen(true);
+  };
+
+  const handleOpenVignette = (url: string) => {
+      setCinemaUrl(url);
+      setIsCinemaMode(true);
+      setModalData(null);
+      setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+      setIsModalOpen(false);
+      setModalData(null);
+      setCinemaUrl('');
+  };
+
+  return (
+    <div className="font-body text-black bg-white w-full relative selection:bg-rose selection:text-white">
+      <StructuredData />
+      <Cursor />
+      <NoiseOverlay />
+      
+      {/* 3D Sidebar (Desktop only) + Mobile Menu */}
+      <Sidebar activeSection={activeSection} />
+
+      {/* Main Content Wrapper with Slide Transition */}
+      {/* The key={lang} ensures React unmounts and remounts the content, triggering the animation */}
+      <main key={lang} className="animate-slide-text">
+        <Hero />
+        <MarqueeStrip />
+        <Films onOpenModal={handleOpenFilm} />
+        <Projects onOpenZine={() => setIsZineOpen(true)} onPlayVignette={handleOpenVignette} />
+        <Footer />
+      </main>
+
+      <Modal 
+        isOpen={isModalOpen} 
+        onClose={handleCloseModal} 
+        data={modalData} 
+        cinemaMode={isCinemaMode} 
+        cinemaUrl={cinemaUrl} 
+      />
+      <ZineGallery isOpen={isZineOpen} onClose={() => setIsZineOpen(false)} />
+    </div>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
+  );
+};
+
+export default App;
