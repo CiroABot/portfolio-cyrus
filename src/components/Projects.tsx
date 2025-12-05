@@ -154,7 +154,7 @@ const Projects: React.FC<ProjectsProps> = ({ onOpenZine, onPlayVignette }) => {
                                      {t.ucb_vozes_credits}
                                  </div>
                                  <button 
-                                     onClick={() => onPlayVignette("https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1")}
+                                     onClick={() => onPlayVignette("https://www.youtube.com/embed/LPkdNakMabE?autoplay=1")}
                                      className="w-full bg-rose text-white hover:bg-yellow hover:text-black font-mono font-bold text-xs py-2 uppercase border border-black transition-colors interactive-target shadow-[2px_2px_0px_#fff] active:translate-y-[2px] active:shadow-none"
                                  >
                                      {t.btn_watch}
@@ -175,7 +175,7 @@ const Projects: React.FC<ProjectsProps> = ({ onOpenZine, onPlayVignette }) => {
                                      {t.ucb_pop_credits}
                                  </div>
                                  <button 
-                                     onClick={() => onPlayVignette("https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1")}
+                                     onClick={() => onPlayVignette("https://www.youtube.com/embed/VlFEnf7tSdY?autoplay=1")}
                                      className="w-full bg-rose text-white hover:bg-yellow hover:text-black font-mono font-bold text-xs py-2 uppercase border border-black transition-colors interactive-target shadow-[2px_2px_0px_#fff] active:translate-y-[2px] active:shadow-none"
                                  >
                                      {t.btn_watch}
@@ -196,7 +196,7 @@ const Projects: React.FC<ProjectsProps> = ({ onOpenZine, onPlayVignette }) => {
                                      {t.ucb_meta_credits}
                                  </div>
                                  <button 
-                                     onClick={() => onPlayVignette("https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1")}
+                                     onClick={() => onPlayVignette("https://www.youtube.com/embed/VlFEnf7tSdY?autoplay=1")}
                                      className="w-full bg-rose text-white hover:bg-yellow hover:text-black font-mono font-bold text-xs py-2 uppercase border border-black transition-colors interactive-target shadow-[2px_2px_0px_#fff] active:translate-y-[2px] active:shadow-none"
                                  >
                                      {t.btn_watch}
@@ -213,7 +213,7 @@ const Projects: React.FC<ProjectsProps> = ({ onOpenZine, onPlayVignette }) => {
 
             {/* CHANNEL 03 */}
              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Workshop 1 */}
+                {/* Workshop 1 - Button Removed */}
                 <div className="bg-white border-3 border-black p-6 shadow-[8px_8px_0px_#d17bac] relative overflow-hidden group transition-all duration-300 hover:scale-[1.02] hover:-rotate-1 hover:shadow-[12px_12px_0px_#d17bac] z-10 hover:z-20">
                     <div className="absolute top-0 right-0 bg-rose text-white font-mono font-bold text-xs px-3 py-1 border-l-3 border-b-3 border-black">2025</div>
                     <div className="border-b-3 border-black pb-4 mb-4">
@@ -222,16 +222,13 @@ const Projects: React.FC<ProjectsProps> = ({ onOpenZine, onPlayVignette }) => {
                     </div>
                     <p className="font-body text-sm font-medium mb-6 text-justify border-l-4 border-yellow pl-3">{t.work_ia_context}</p>
                     <div className="mt-auto">
-                        <div className="text-xs font-mono text-gray-500 mb-4 uppercase">
+                        <div className="text-xs font-mono text-gray-500 uppercase">
                              <strong>{t.work_prod_label}</strong> CAJUÍ COLLAB / OLFATO / MATRIZ
                         </div>
-                        <a href="#" className="block w-full text-center bg-black text-white font-bold font-mono py-3 uppercase border-2 border-transparent hover:bg-rose hover:text-white hover:border-black transition-all interactive-target">
-                            {t.btn_link}
-                        </a>
                     </div>
                 </div>
 
-                {/* Workshop 2 */}
+                {/* Workshop 2 - Button Removed */}
                 <div className="bg-white border-3 border-black p-6 shadow-[8px_8px_0px_#7bc8d1] relative overflow-hidden group transition-all duration-300 hover:scale-[1.02] hover:rotate-1 hover:shadow-[12px_12px_0px_#7bc8d1] z-10 hover:z-20">
                      <div className="absolute top-0 right-0 bg-teal text-black font-mono font-bold text-xs px-3 py-1 border-l-3 border-b-3 border-black">2024</div>
                     <div className="border-b-3 border-black pb-4 mb-4">
@@ -240,11 +237,8 @@ const Projects: React.FC<ProjectsProps> = ({ onOpenZine, onPlayVignette }) => {
                     </div>
                      <p className="font-body text-sm font-medium mb-6 text-justify border-l-4 border-black pl-3">{t.work_cultura_context}</p>
                     <div className="mt-auto">
-                         <div className="text-xs font-mono text-gray-500 mb-4 uppercase">
+                         <div className="text-xs font-mono text-gray-500 uppercase">
                              <strong>{t.work_prod_label}</strong> INSTITUTO AJA BRASIL
-                        </div>
-                         <div className="block w-full text-center bg-gray-200 text-gray-500 font-bold font-mono py-3 uppercase border-2 border-transparent cursor-not-allowed">
-                            ---
                         </div>
                     </div>
                 </div>
@@ -268,7 +262,7 @@ const Projects: React.FC<ProjectsProps> = ({ onOpenZine, onPlayVignette }) => {
                             <div className="absolute top-2 right-4 font-mono font-bold text-9xl text-gray-100 -z-10 pointer-events-none select-none">2024</div>
                             
                             <h3 className="font-title font-black italic text-4xl md:text-5xl uppercase text-black mb-4 vhs-text">
-                                OFICINA<br/><span className="text-rose bg-black px-2 not-italic">CINEMA FEITO</span>
+                                OFICINA<br/><span className="text-rose bg-black px-2 not-italic">CINEMA FEITO, CINEMA FALADO</span>
                             </h3>
                             
                             <div className="flex flex-wrap gap-2 mb-6">

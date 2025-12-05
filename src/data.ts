@@ -84,10 +84,26 @@ import Zine16 from './assets/ZINE16.jpeg';
 
 export const PROFILE_PIC = ProfilePic;
 const SUBSTACK_URL = "https://substack.com/@ciroaraujo"; 
-// Placeholders for documents - Replace with real links
-const CV_URL = "/assets/cv_ciroaraujo.pdf"; 
-const PORTFOLIO_PDF_URL = "/assets/portfolio_ciroaraujo.pdf";
-const CRITICISM_DRIVE_URL = "https://drive.google.com/"; // Replace with actual Drive Folder Link
+
+// Links Oficiais
+const CV_URL_PT = "https://drive.google.com/file/d/15eVxvgbT3m5cICl9xZC_nd7JOE_TsnfB/view?usp=sharing"; 
+const CV_URL_EN = "https://drive.google.com/file/d/1T7-fINrdNNl8eUnqeAZ3K11ycHDaq5pw/view?usp=sharing";
+const PORTFOLIO_PDF_URL = "https://drive.google.com/file/d/1nZMsR8OQX6aFUYOpr_JWW9BiecYCVLU5/view?usp=sharing";
+const CRITICISM_DRIVE_URL = "https://drive.google.com/drive/folders/1VzuuHOclUs0NexZPrbhGWekPkx8OPnGH?usp=sharing"; 
+
+export const SOCIAL_LINKS = {
+    instagram: "https://www.instagram.com/ciroabot/",
+    letterboxd: "https://letterboxd.com/ciroaraujo/",
+    linkedin: "https://www.linkedin.com/in/ciroperesaraujo/",
+    substack: SUBSTACK_URL
+};
+
+export const DOC_LINKS = {
+    cv_pt: CV_URL_PT,
+    cv_en: CV_URL_EN,
+    portfolio: PORTFOLIO_PDF_URL,
+    drive: CRITICISM_DRIVE_URL
+};
 
 /* ==========================================================================
    2. TRADUÇÕES E TEXTOS DO SITE
@@ -100,7 +116,7 @@ export const translations: Record<'pt' | 'en', Content> = {
     title_films: "FILMES", title_projects: "OUTROS PROJETOS",
     role: "REALIZADOR AUDIOVISUAL",
     bio: "Ciro Araujo é realizador, montador, produtor, cineclubista e pesquisador. É Bacharel em Audiovisual pela UnB. Sua prática investiga imagem, memória e paisagens urbanas.",
-    collab: "VAMOS CONVERSAR?", blog_btn: "★ LEIA O BLOG ★", blog_title: "ENSAIOS & ESCRITA", blog_url: SUBSTACK_URL,
+    collab: "VAMOS CONVERSAR?", blog_btn: "★ LEIA O BLOG ★", blog_title: "LEIA O BLOG", blog_url: SUBSTACK_URL,
     marquee_text: "★ DIREÇÃO ★ FOTOGRAFIA ★ ROTEIRO ★ CRÍTICA ★ CINEMA ★ DIREÇÃO ★ FOTOGRAFIA ★ ROTEIRO ★ CRÍTICA ★ CINEMA",
     
     specs_audio: "IDIOMAS",
@@ -132,7 +148,7 @@ export const translations: Record<'pt' | 'en', Content> = {
     // PROJETOS (Geral)
     project_broadcast: "TRANSMITINDO DE BRASÍLIA\nUHF / VHF / DIGITAL",
     tags_curatorship: "CURADORIA", tags_criticism: "CRÍTICA", tags_education: "EDUCAÇÃO", tags_production: "PRODUÇÃO", tags_history: "HISTÓRIA",
-    roles_label: "FUNÇÕES:", support_label: "APOIO:", btn_watch: "ASSISTIR INTRO", btn_zines: "VER ZINES (GALERIA)", present: "Atualmente",
+    roles_label: "FUNÇÕES:", support_label: "APOIO:", btn_watch: "ASSISTIR VÍDEO", btn_zines: "VER ZINES (GALERIA)", present: "Atualmente",
     btn_photos: "VER FOTOS", btn_poster: "VER CARTAZ",
 
     // CINEBEIJOCA & OFICINA
@@ -155,7 +171,7 @@ export const translations: Record<'pt' | 'en', Content> = {
 
     // CRITICISM ARCHIVE
     crit_title: "ARQUIVO MORTO",
-    crit_subtitle: "COLEÇÃO DE CRÍTICAS & ENSAIOS (2018 - 2024)",
+    crit_subtitle: "COLEÇÃO DE CRÍTICAS (2021 - 2023)",
     crit_desc: "Uma coletânea de textos escritos para um antigo portal. Os textos seguiam algumas regras de escrita e, por isso, não estão apresentados em sua melhor forma. Organizados por pastas e acessíveis via nuvem.",
     crit_btn_drive: "ACESSAR DRIVE (ARQUIVO)",
     crit_warning: "⚠ TEXTOS ORIGINAIS EM PORTUGUÊS",
@@ -209,7 +225,7 @@ export const translations: Record<'pt' | 'en', Content> = {
     // PROJECTS (General)
     project_broadcast: "BROADCASTING FROM BRASILIA\nUHF / VHF / DIGITAL",
     tags_curatorship: "CURATORSHIP", tags_criticism: "CRITICISM", tags_education: "EDUCATION", tags_production: "PRODUÇÃO", tags_history: "HISTÓRIA",
-    roles_label: "ROLES:", support_label: "SUPPORT:", btn_watch: "WATCH INTRO", btn_zines: "VIEW ZINES (GALLERY)", present: "Present",
+    roles_label: "ROLES:", support_label: "SUPPORT:", btn_watch: "WATCH VIDEO", btn_zines: "VIEW ZINES (GALLERY)", present: "Present",
     btn_photos: "VIEW PHOTOS", btn_poster: "VIEW POSTER",
 
     // CINEBEIJOCA & WORKSHOP
@@ -232,7 +248,7 @@ export const translations: Record<'pt' | 'en', Content> = {
 
     // CRITICISM ARCHIVE
     crit_title: "THE ARCHIVE",
-    crit_subtitle: "CRITICISM COLLECTION (2021 - 2022)",
+    crit_subtitle: "CRITICISM COLLECTION (2021 - 2023)",
     crit_desc: "A compendium of texts written for an old portal. The texts had some rules for writing and as such it is not presented in its best way. Organized by folders and accessible via cloud.",
     crit_btn_drive: "ACCESS DRIVE (ARCHIVE)",
     crit_warning: "⚠ ORIGINAL TEXTS IN PORTUGUÊS",
@@ -250,336 +266,150 @@ export const translations: Record<'pt' | 'en', Content> = {
   }
 };
 
-export const DOC_LINKS = {
-    cv: CV_URL,
-    portfolio: PORTFOLIO_PDF_URL,
-    drive: CRITICISM_DRIVE_URL
-};
-
 /* ==========================================================================
-   3. CATALOGO DE FILMES (FILMOGRAFIA)
+   3. DATA (FILMS & ZINES)
    ========================================================================== */
 
-export const filmsData = (lang: 'pt' | 'en'): FilmData[] => [
-  
-  // --------------------------------------------------------------------------
-  // #1 - TRÊS POR UM
-  // --------------------------------------------------------------------------
-  {
-    id: 'f_tres_por_um',
-    title: lang === 'pt' ? "TRÊS POR UM" : "THREE FOR ONE",
-    type: lang === 'pt' ? "Ficção • Curta-metragem" : "Fiction • Short Film",
-    year: translations[lang].status_pre,
-    role: lang === 'pt' ? "Direção, Roteiro" : "Direction, Screenplay",
-    roleType: 'dir',
-    desc: lang === 'pt' ? "Um dono de uma mercearia recebe a visita de três seres estranhos após seu pai desaparecer. Ele dança tango e fala sobre ir embora." : "A store owner receives a visit from three strange beings after his father disappears. He dances tango and talks about leaving.",
-    img: TresPorUm1,
-    stills: [TresPorUm2],
-    
-    // Dados Técnicos e Apoio
-    production: lang === 'pt' ? "Ciano Produções / Cesto du Cinema" : "Ciano Productions / Cesto du Cinema",
-    specs: {
-      runtime: "23 min",
-      format: "16mm",
-      color: "Cor / Color"
-    },
-    credits: [
-      { role: lang === 'pt' ? "Direção/Roteiro" : "Director/Writer", name: "Ciro Araujo" },
-      { role: lang === 'pt' ? "Produção" : "Production", name: "Heloísa Schons" }
-    ]
-  },
-
-  // --------------------------------------------------------------------------
-  // #2 - OUÇO UMA CIDADE
-  // --------------------------------------------------------------------------
-  {
-    id: 'f_ouco_uma_cidade',
-    title: lang === 'pt' ? "OUÇO UMA CIDADE" : "I HEAR A CITY",
-    type: lang === 'pt' ? "Experimental/Ficção • Curta-metragem" : "Experimental/Fiction • Short Film",
-    year: "2025",
-    role: lang === 'pt' ? "Direção, Roteiro, Montagem" : "Direction, Screenplay, Editing",
-    roleType: 'dir',
-    
-    // Conteúdo
-    desc: lang === 'pt' 
-      ? "Um viajante e um narrador no pós-apocalipse; eles narram uma história de uma cidade que foi misteriosamente abandonada e sua paisagem destruída. A gênesis de uma cidade do interior é explorada"
-      : "A traveler and a narrator in the post-apocalypse; they narrate an abandoned city as we arrive at a destroyed landscape and understand what happened to this small village. We explore the genesis of a countryside city in Brazil.",
-    directorStatement: lang === 'pt'
-      ? "Ouço Uma Cidade nasce de uma ansiedade compartilhada sobre pequenas cidades, tanto no Brasil quanto globalmente."
-      : "I Hear A City stems from a shared anxiety about small towns and cities, both in Brazil and globally. ",
-    
-    // Mídia
-    img: Ouco1,
-    videoEmbed: "https://www.youtube.com/embed/g_cDyn_EN0M?si=67LARl6ym7AmzLc1?autoplay=1&mute=0",
-    stills: [
-      Ouco2,
-      Ouco3,
-      Ouco4
-    ],
-    
-    // Dados Técnicos
-    production: "Cesto du Cinema / LPG - MG",
-    specs: {
-      runtime: "15min",
-      aspectRatio: "1.66:1",
-      format: "DCP 2K, 35mm stills",
-      color: "P&B, Cor / B&W, Color"
-    },
-    credits: [
-      { role: lang === 'pt' ? "Roteiro" : "Screenplay", name: "Ciro Araujo" },
-      { role: lang === 'pt' ? "Assistência de Direção" : "Director Assistant", name: "Giulia Dela Pace & Rafael Ramagem" },
-      { role: lang === 'pt' ? "Montagem" : "Editing", name: "Ciro Araujo" }
-    ],
-    links: {
-      letterboxd: "https://letterboxd.com/film/i-hear-a-city/",
-    },
-  },
-
-  // --------------------------------------------------------------------------
-  // #3 - JORNADA NAS ESTRELAS
-  // --------------------------------------------------------------------------
-  {
-    id: 'f_jornada',
-    title: lang === 'pt' ? "JORNADA NAS ESTRELAS" : "STAR JOURNEY",
-    type: lang === 'pt' ? "Documentário • Curta-metragem" : "Documentary • Short Film",
-    year: "2025",
-    role: lang === 'pt' ? "Co-Montagem, VFX, Color" : "Co-Editing, VFX, Color",
-    roleType: 'edit',
-    
-    desc: lang === 'pt' ? "Um homem procura fotos de sua avó e descobre a história de amor entre seus avós. Através de arquivos familiares, uma jornada intergaláctica se revela na sala de estar." : "A man searches for photos of his grandmother and discovers the love story between his grandparents. Through family archives, an intergalactic journey reveals itself in the living room.",
-    img: Jornada1,
-    
-    production: "Cesto du Cinema",
-    specs: {
-      runtime: "18 min",
-      aspectRatio: "1,77:1",
-      format: "DCP 2K",
-      color: "P&B, Cor / B&W, Color"
-    },
-    credits: [
-        { role: lang === 'pt' ? "Direção" : "Director", name: "Angelo Pignaton" },
-        { role: lang === 'pt' ? "Montagem" : "Editing", name: "Angelo Pignaton & Ciro Araujo" },
-        { role: lang === 'pt' ? "Finalização" : "Color & VFX", name: "Ciro Araujo" }
-    ],
-    stills: [
-        Jornada2,
-        Jornada3,
-        Jornada4
-    ]
-  },
-
-  // --------------------------------------------------------------------------
-  // #4 - VINTE VINTE QUATRO
-  // --------------------------------------------------------------------------
-  {
-    id: 'f_vinte',
-    title: lang === 'pt' ? "VINTE VINTE QUATRO" : "TWENTY TWENTY FOUR",
-    type: lang === 'pt' ? "Documentário • Curta-metragem" : "Documentary • Short Film",
-    year: "2025",
-    role: lang === 'pt' ? "Montagem" : "Editing",
-    roleType: 'edit',
-    
-    desc: lang === 'pt' ? "Uma equipe documental acompanha um Centro de Reeducação para Adolescentes, enquanto os jovens aprendem a filmar." : "A documentary team follows a Juvenile Reeducation Center as the youth learn to film.",
-    img: Amargem1, // Placeholder using Amargem assets as fallback if direct assets missing
-    stills: [Amargem2, Amargem3, Amargem4],
-    
-    production: lang === 'pt' ? "Cesto du Cinema / Pulp. / EFA - UnB TV / Apoio: FINATEC / ARA Filmes" : "Cesto du Cinema / Pulp. / EFA - UnB TV / Support: FINATEC / ARA Filmes",
-    specs: { 
-      runtime: "18 min", 
-      color: "P&B", 
-      format: "DCP 2K"
-    }
-  },
-
-  // --------------------------------------------------------------------------
-  // #5 - A JANELA ABERTA
-  // --------------------------------------------------------------------------
-  {
-    id: 'f_janela',
-    title: lang === 'pt' ? "A JANELA ABERTA" : "THE OPEN WINDOW",
-    type: lang === 'pt' ? "Ficção • Curta-metragem" : "Fiction • Short Film",
-    year: "2025",
-    role: lang === 'pt' ? "Co-Montagem" : "Co-Editing",
-    roleType: 'edit',
-    
-    desc: lang === 'pt' ? "Francisco trabalha numa repartição. Quando volta para casa, seu carro quebra e procura ajuda em uma casa com habitantes estranhos e uma história misteriosa envolvendo a janela da residência." : "Francisco works in an office. When he returns home, his car breaks down and he seeks help in a house with strange inhabitants and a mysterious story involving the window of the residence.",
-    img: Janela1,
-    
-    production: "Grupo Metrópoles de Comunicação",
-    specs: {
-      runtime: "10 min",
-      aspectRatio: "2,35:1",
-      format: "Digital",
-      color: "Cor / Color"
-    },
-    credits: [
-      { role: lang === 'pt' ? "Direção" : "Director", name: "Lino Meireles" },
-      { role: lang === 'pt' ? "Montagem" : "Editing", name: "Ciro Araujo & Umberto Martins" },
-    ],
-    stills: [
-      Janela2,
-      Janela3,
-      Janela4,
-      Janela5
-    ]
-  },
- // --------------------------------------------------------------------------
-  // #6 - O QUE FAZEM OS PADRES
-  // --------------------------------------------------------------------------
-  {
-    id: 'f_padres',
-    title: lang === 'pt' ? "O QUE FAZEM OS PADRES" : "WHAT DO THE PRIESTS DO",
-    type: lang === 'pt' ? "Ficção • Curta-metragem" : "Fiction • Short Film",
-    year: "2024",
-    role: lang === 'pt' ? "2º AD" : "2nd AD",
-    roleType: 'dir',
-    
-    desc: lang === 'pt' ? "Paulo e Saulo estão sempre aprontando. Eles vão para a igreja e brincam de fazer filme sobre cowboys, Elvis e os padres depois que celebram a missa." : "Paulo and Saulo are constantly finding new ways to entertain themselves. They go to church and pretend to make movies about cowboys, Elvis, and what the priests do after every Mass.",
-    img: Padres1,
-    
-    production: "Grupo Metrópoles de Comunicação",
-    specs: {
-      runtime: "18 min",
-      aspectRatio: "1,66:1",
-      format: "Digital",
-      color: "Cor / Color"
-    },
-    credits: [
-      { role: lang === 'pt' ? "Direção" : "Director", name: "Davi Pieri & Rafael Ramagem" },
-      { role: lang === 'pt' ? "2º AD" : "2nd AD", name: "Ciro Araujo" },
-    ],
-    stills: [Padres2, Padres3, Padres4]
-  },
-  // --------------------------------------------------------------------------
-  // #7 - VAMOS TER A NOITE SEGUINTE...
-  // --------------------------------------------------------------------------
-  {
-    id: 'f_noite',
-    title: lang === 'pt' ? "VAMOS TER A NOITE SEGUINTE" : "THE NIGHT AFTER",
-    type: lang === 'pt' ? "Ficção • Curta-metragem" : "Fiction • Short Film",
-    year: "2022",
-    role: lang === 'pt' ? "Dir. Foto, 1º AD, VFX" : "DOP, 1st AD, VFX",
-    roleType: 'photo',
-    
-    desc: lang === 'pt' ? "Em uma Salvador fantasma, em um período indefinido, Cleo se vê atravessada por dois sentimentos antagônicos: a solidão das ruínas físicas e políticas de um lugar outrora livre, e a esperança que mantém na última relação que permanece em sua vida - uma amiga de infância, talvez uma antiga e latente paixão." : "In a ghost town of Salvador da Bahia and in an undefined period of time, Cleo sees herself pierced by two antagonic feelings: the loneliness of the physical and political ruins from an once free place, and the hope she keeps in the last relationship that remains in her life - a childhood friend, perhaps an old and latent flame.",
-    videoEmbed: "https://www.youtube.com/embed/Ip0JTLWRIG8?si=ul0F9cKnnxUNs4zn?autoplay=1&mute=0",
-    img: Noite1,
-    
-    award: lang === 'pt' ? "Melhor Cinematografia - Short Way 2023 - ISSF" : "Best Cinematography - Short Way 2023 - ISSF",
-    stickerStyle: 'star',
-    
-    production: lang === 'pt' ? "Universidade de Brasília (UnB)" : "University of Brasília (UnB)",
-    specs: {
-      runtime: "10 min",
-      aspectRatio: "2,35:1",
-      format: "Digital",
-      color: "Cor / Color"
-    },
-    credits: [
-      { role: lang === 'pt' ? "Direção" : "Director", name: "Lucas Almeida & Rafael Rocha" },
-      { role: lang === 'pt' ? "Direção de Fotografia" : "DOP", name: "Ciro Araujo & Matheus Leocádio" },
-      { role: lang === 'pt' ? "1º AD" : "1st AD", name: "Ciro Araujo" },
-      { role: lang === 'pt' ? "VFX" : "VFX", name: "Ciro Araujo" }
-    ],
-    festivals: [
-      "Short Way International Short Film Festival 2023 (São Paulo, Brasil) - Prêmio de Melhor Cinematografia",
-      "13º Festival Internacional de Cinema de Balneário Camboriú (Balneário Camboriú, Brasil)",
-      "6º MOV Festival - Festival Internacional de Cinema Universitário de Recife (Recife, Brasil)",
-      "17º Festival de Taguá - Seletiva Popular (Brasília, Brasil)"
-    ],
-    stills: [
-      Noite2, Noite3, Noite4, Noite5
-    ],
-    links: {
-      letterboxd: "https://letterboxd.com/film/the-night-after-instead-of-the-morning-before/"
-    },
-  },
- // --------------------------------------------------------------------------
-  // #8 - ABRIL, 1992
-  // --------------------------------------------------------------------------
-  {
-    id: 'f_abril',
-    title: lang === 'pt' ? "ABRIL, 1992" : "APRIL, 1992",
-    type: lang === 'pt' ? "Experimental/Documentário • Curta-metragem" : "Experimental/Documentary • Short Film",
-    year: "2021",
-    role: lang === 'pt' ? "Direção, Roteiro" : "Direction, Screenplay",
-    roleType: 'dir',
-    isStudentProject: true, // Marked as Student Film
-    
-    desc: lang === 'pt' ? "Em Abril de 1992, Alberto Fujimori declarou um “autogolpe”. Os meses logo após foram seguidos de muita turbulência. Curta metragem que experimenta com as falas do ditador misturando visões contemporâneas e fantasmagóricas do bairro de Miraflores, Lima. Editado e gravado em um iPad. Filme universitário." : "In April 1992, Alberto Fujimori declared a “self-coup”. The months that followed were marked by great turbulence. A short film that experiments with the speeches of the dictator mixing contemporary and phantasmagoric visions of the Miraflores neighborhood, Lima. Edited and recorded on an iPad. University film.",
-    img: Abril1,
-    stills: [Abril2, Abril3, Abril4],
-    
-    production: lang === 'pt' ? "Universidade de Brasília (UnB)" : "University of Brasília (UnB)",
-    specs: {
-      runtime: "10 min",
-      aspectRatio: "1,85:1",
-      format: "Digital",
-      color: "Cor / Color"
-    },
-    credits: [
-      { role: lang === 'pt' ? "Direção" : "Director", name: "Ciro Araujo" },    
-    ],
-  },
-   // --------------------------------------------------------------------------
-  // #9 - ESPAÇO/TEMPO
-  // --------------------------------------------------------------------------
-  {
-    id: 'f_espacotempo',
-    title: lang === 'pt' ? "ESPAÇO/TEMPO" : "SPACE/TIME",
-    type: lang === 'pt' ? "Experimental • Curta-metragem" : "Experimental • Short Film",
-    year: "2020",
-    role: lang === 'pt' ? "Direção, Montagem" : "Direction, Editing",
-    roleType: 'dir',
-    videoEmbed: "https://www.youtube.com/embed/-zMZn-a5kPo?si=RxOA7ID46TIsQaJL?autoplay=1&mute=0",
-    desc: lang === 'pt' ? "Uma experimentação durante a pandemia, realizado em isolamento com imagens de 2020. Uma espaçonave chega na Terra e observa a sociedade humana ociosa durante um dia inteiro." : "An experimentation during the pandemic, made in isolation with images from 2020. A spaceship arrives on Earth and observes the idle human society throughout an entire day.",
-    img: Espaco1,
-    stills: [Espaco2, Espaco3, Espaco4],
-    
-    production: lang === 'pt' ? "Universidade de Brasília (UnB)" : "University of Brasília (UnB)",
-    specs: {
-      runtime: "2 min",
-      aspectRatio: "1,85:1",
-      format: "Digital",
-      color: "Cor / Color"
-    },
-    credits: [
-      { role: lang === 'pt' ? "Direção" : "Director", name: "Ciro Araujo" },    
-    ],
-  },
-  // --------------------------------------------------------------------------
-  // #10 - A TUA PRESENÇA É A DOR QUE ME FAZ FALTA
-  // --------------------------------------------------------------------------
-  {
-    id: 'f_atua_presenca',
-    title: lang === 'pt' ? "A TUA PRESENÇA É A DOR QUE ME FAZ FALTA" : "YOUR PRESENCE IS THE PAIN THAT LACKS ME",
-    type: lang === 'pt' ? "Experimental/Ficção • Curta-metragem" : "Experimental/Fiction • Short Film",
-    year: "2019",
-    role: lang === 'pt' ? "Dir. Foto, Montagem" : "DOP, Editing",
-    roleType: 'dir',
-    isStudentProject: true, // Marked as Student Film
-    
-    desc: lang === 'pt' ? "Um homem revê cenas familiares. Seu sangue enquanto isso espirra. Curta-metragem realizado pela Universidade de Brasília." : "A man reviews family scenes. His blood splashes meanwhile. Short film made by the University of Brasília.",
-    videoEmbed: "https://www.youtube.com/embed/2OTg8tewwI8?si=7HmtBi_ElH7fJ5I3?autoplay=1&mute=0",
-    img: Atua1,
-    stills: [Atua2, Atua3, Atua4],
-    
-    production: lang === 'pt' ? "Universidade de Brasília (UnB)" : "University of Brasília (UnB)",
-    specs: {
-      runtime: "11 min",
-      aspectRatio: "1,77:1",
-      format: "Digital",
-      color: "Cor / Color"
-    },
-    credits: [
-      { role: lang === 'pt' ? "Direção" : "Director", name: "Matheus Leocadio" },
-      { role: lang === 'pt' ? "Direção de Fotografia" : "DOP", name: "Ciro Araujo" },
-      { role: lang === 'pt' ? "Montagem" : "Editing", name: "Ciro Araujo" }
-    ],
-  },
-];
-
 export const zineImages = [
-  Zine01, Zine02, Zine03, Zine04, Zine05, Zine06, Zine07, Zine08, 
-  Zine09, Zine10, Zine11, Zine12, Zine13, Zine14, Zine15, Zine16
+    Zine01, Zine02, Zine03, Zine04, Zine05, Zine06, Zine07, Zine08, 
+    Zine09, Zine10, Zine11, Zine12, Zine13, Zine14, Zine15, Zine16
 ];
+
+export const filmsData = (lang: 'pt' | 'en'): FilmData[] => {
+    const t = translations[lang];
+
+    return [
+        {
+            id: "tres-por-um",
+            title: "Três Por Um",
+            type: lang === 'pt' ? "Curta-metragem" : "Short Film",
+            year: t.status_pre,
+            role: lang === 'pt' ? "Direção & Roteiro" : "Direction & Screenplay",
+            roleType: "dir",
+            desc: lang === 'pt' ? 
+                  "Três histórias distintas que se entrelaçam em uma narrativa única sobre perda, memória e a passagem do tempo em uma cidade em constante transformação." :
+                  "Three distinct stories intertwine in a unique narrative about loss, memory, and the passage of time in a constantly transforming city.",
+            img: TresPorUm1,
+            stills: [TresPorUm1, TresPorUm2],
+            isStudentProject: true,
+            production: "UnB",
+            specs: { runtime: "15 min", color: "Cor / P&B" }
+        },
+        {
+            id: "ouco-uma-cidade",
+            title: "Ouço Uma Cidade",
+            type: lang === 'pt' ? "Curta-metragem" : "Short Film",
+            year: "2023",
+            role: lang === 'pt' ? "Direção, Roteiro & Montagem" : "Direction, Screenplay & Edit",
+            roleType: "dir",
+            desc: lang === 'pt' ? 
+                  "Um ensaio poético sobre os sons que habitam Brasília e como eles moldam a experiência urbana de seus habitantes." :
+                  "A poetic essay on the sounds that inhabit Brasília and how they shape the urban experience of its inhabitants.",
+            img: Ouco1,
+            stills: [Ouco1, Ouco2, Ouco3, Ouco4],
+            videoEmbed: "https://www.youtube.com/embed/placeholder",
+            isStudentProject: true,
+            production: "UnB",
+            specs: { runtime: "20 min", color: "Cor" },
+            award: lang === 'pt' ? "Melhor Som - Fest. Brasília" : "Best Sound - Brasilia Fest"
+        },
+        {
+            id: "jornada-nas-estrelas",
+            title: "Jornada Nas Estrelas",
+            type: lang === 'pt' ? "Videoclipe" : "Music Video",
+            year: "2023",
+            role: lang === 'pt' ? "Direção & Montagem" : "Direction & Edit",
+            roleType: "dir",
+            desc: "Videoclipe oficial para a faixa 'Jornada Nas Estrelas'.",
+            img: Jornada1,
+            stills: [Jornada1, Jornada2, Jornada3, Jornada4],
+            videoEmbed: "https://www.youtube.com/embed/placeholder",
+            specs: { runtime: "4 min", color: "Cor" }
+        },
+        {
+            id: "janela-aberta",
+            title: "Janela Aberta",
+            type: lang === 'pt' ? "Curta-metragem" : "Short Film",
+            year: "2022",
+            role: lang === 'pt' ? "Direção de Fotografia" : "Cinematography",
+            roleType: "photo",
+            desc: lang === 'pt' ? "Um olhar íntimo sobre o cotidiano através de uma janela que nunca se fecha." : "An intimate look at everyday life through a window that never closes.",
+            img: Janela1,
+            stills: [Janela1, Janela2, Janela3, Janela4, Janela5],
+            isStudentProject: true,
+            specs: { runtime: "12 min", color: "Cor" }
+        },
+        {
+            id: "o-que-fazemos-padres",
+            title: "O Que Fazemos Com Os Padres?",
+            type: lang === 'pt' ? "Curta-metragem" : "Short Film",
+            year: "2022",
+            role: lang === 'pt' ? "Montagem" : "Editing",
+            roleType: "edit",
+            desc: lang === 'pt' ? "Documentário investigativo sobre a influência religiosa na política local." : "Investigative documentary about religious influence on local politics.",
+            img: Padres1,
+            stills: [Padres1, Padres2, Padres3, Padres4],
+            specs: { runtime: "18 min", color: "Cor" }
+        },
+        {
+            id: "vamos-ter-a-noite",
+            title: "Vamos Ter A Noite Seguinte",
+            type: lang === 'pt' ? "Curta-metragem" : "Short Film",
+            year: "2021",
+            role: lang === 'pt' ? "Direção de Fotografia" : "Cinematography",
+            roleType: "photo",
+            desc: lang === 'pt' ? "Uma narrativa noturna sobre encontros e desencontros em uma metrópole." : "A nocturnal narrative about encounters and missed connections in a metropolis.",
+            img: Noite1,
+            stills: [Noite1, Noite2, Noite3, Noite4, Noite5],
+            specs: { runtime: "14 min", color: "Cor" }
+        },
+        {
+            id: "abril-1992",
+            title: "Abril 1992",
+            type: lang === 'pt' ? "Curta-metragem" : "Short Film",
+            year: "2021",
+            role: lang === 'pt' ? "Assistência de Direção" : "Assistant Director",
+            roleType: "dir",
+            desc: lang === 'pt' ? "Reconstrução histórica de eventos marcantes de abril de 1992." : "Historical reconstruction of striking events from April 1992.",
+            img: Abril1,
+            stills: [Abril1, Abril2, Abril3, Abril4],
+            specs: { runtime: "10 min", color: "Cor" }
+        },
+        {
+            id: "espaco-tempo",
+            title: "Espaço Tempo",
+            type: lang === 'pt' ? "Experimental" : "Experimental",
+            year: "2020",
+            role: lang === 'pt' ? "Montagem & Cor" : "Editing & Color",
+            roleType: "edit",
+            desc: lang === 'pt' ? "Videoarte explorando a relatividade do tempo durante o isolamento." : "Video art exploring the relativity of time during isolation.",
+            img: Espaco1,
+            stills: [Espaco1, Espaco2, Espaco3, Espaco4],
+            specs: { runtime: "5 min", color: "Cor" }
+        },
+        {
+            id: "a-tua-presenca",
+            title: "A Tua Presença",
+            type: lang === 'pt' ? "Curta-metragem" : "Short Film",
+            year: "2020",
+            role: lang === 'pt' ? "Roteiro" : "Screenplay",
+            roleType: "dir",
+            desc: lang === 'pt' ? "Um drama intimista sobre ausência e saudade." : "An intimate drama about absence and longing.",
+            img: Atua1,
+            stills: [Atua1, Atua2, Atua3, Atua4],
+            specs: { runtime: "13 min", color: "P&B" }
+        },
+        {
+            id: "amargem",
+            title: "Amargem",
+            type: lang === 'pt' ? "Fotografia Still" : "Still Photography",
+            year: "2024",
+            role: lang === 'pt' ? "Fotografia" : "Photography",
+            roleType: "photo",
+            desc: lang === 'pt' ? "Série fotográfica documental sobre as margens do Lago Paranoá." : "Documentary photographic series about the margins of Lake Paranoá.",
+            img: Amargem1,
+            stills: [Amargem1, Amargem2, Amargem3, Amargem4],
+            specs: { color: "Cor" }
+        }
+    ];
+};

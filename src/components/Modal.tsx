@@ -283,7 +283,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, data, cinemaMode, cinema
                                      <img src={data.img} className="w-full h-full object-cover" alt="Main" />
                                  </button>
                                  
-                                 {data.stills.map((still, i) => (
+                                 {data.stills.filter(s => s !== data.img).map((still, i) => (
                                      <button 
                                          key={i}
                                          onClick={() => switchToImage(still)}
