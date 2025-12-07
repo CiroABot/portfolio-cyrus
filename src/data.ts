@@ -541,6 +541,7 @@ export const filmsData = (lang: 'pt' | 'en'): FilmData[] => [
     year: "2020",
     role: lang === 'pt' ? "Direção, Montagem" : "Direction, Editing",
     roleType: 'dir',
+    isStudentProject: true,
     videoEmbed: "https://www.youtube.com/embed/-zMZn-a5kPo?si=RxOA7ID46TIsQaJL?autoplay=1&mute=0",
     desc: lang === 'pt' ? "Uma experimentação durante a pandemia, realizado em isolamento com imagens de 2020. Uma espaçonave chega na Terra e observa a sociedade humana ociosa durante um dia inteiro." : "An experimentation during the pandemic, made in isolation with images from 2020. A spaceship arrives on Earth and observes the idle human society throughout an entire day.",
     img: Espaco1,
