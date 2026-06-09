@@ -1,9 +1,9 @@
+'use client';
 
 import React, { useEffect, useState, Suspense, useRef } from 'react';
 import Lenis from '@studio-freight/lenis';
 // Removed HelmetProvider import
 import { LanguageProvider, useLanguage } from './LanguageContext';
-import Cursor from './components/Cursor';
 import Sidebar from './components/Sidebar';
 import Hero from './components/Hero';
 import Films from './components/Films';
@@ -13,9 +13,7 @@ import Footer from './components/Footer';
 import Modal from './components/Modal';
 import ZineGallery from './components/ZineGallery';
 import VHSOverlay from './components/VHSOverlay';
-import SEO from './components/SEO';
-import { FilmData } from './types';
-import { filmsData } from './data';
+import { FilmData, Language } from './types';
 
 const MarqueeStrip: React.FC = () => {
     const { t } = useLanguage();
@@ -39,37 +37,6 @@ const MarqueeStrip: React.FC = () => {
         </div>
     );
 }
-
-// SEO Component to inject JSON-LD for VideoObjects
-const StructuredData: React.FC = () => {
-    const { lang } = useLanguage();
-    const films = filmsData(lang);
-
-    const schemaData = films
-        .filter(film => film.videoEmbed)
-        .map(film => ({
-            "@context": "https://schema.org",
-            "@type": "VideoObject",
-            "name": film.title,
-            "description": film.desc,
-            "thumbnailUrl": [film.img],
-            "uploadDate": `${film.year === 'EM PRÉ-PRODUÇÃO' || film.year === 'IN PRE-PRODUCTION' ? '2025' : film.year}-01-01`,
-            "duration": film.specs?.runtime ? `PT${film.specs.runtime.replace(' min', 'M').replace(' ', '')}` : undefined,
-            "embedUrl": film.videoEmbed
-        }));
-
-    return (
-        <>
-            {schemaData.map((data, index) => (
-                <script 
-                    key={index} 
-                    type="application/ld+json"
-                    dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
-                />
-            ))}
-        </>
-    );
-};
 
 const AppContent: React.FC = () => {
   const { lang } = useLanguage();
@@ -147,6 +114,9 @@ const AppContent: React.FC = () => {
         cancelAnimationFrame(reqId);
         lenis.destroy();
         window.removeEventListener('scroll', handleScrollSpy);
+        // Restore scrolling when leaving the homepage (e.g. navigating to a film
+        // page while a modal had locked the body) so the next page isn't stuck.
+        document.body.style.overflow = '';
     };
   }, []);
 
@@ -184,10 +154,6 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="font-body text-black bg-white w-full relative selection:bg-rose selection:text-white">
-      <SEO />
-      <StructuredData />
-      
-      <Cursor />
       <VHSOverlay />
       
       <Sidebar activeSection={activeSection} />
@@ -214,9 +180,9 @@ const AppContent: React.FC = () => {
   );
 };
 
-const App: React.FC = () => {
+const App: React.FC<{ initialLang: Language }> = ({ initialLang }) => {
   return (
-    <LanguageProvider>
+    <LanguageProvider initialLang={initialLang}>
       <Suspense fallback={<div className="w-full h-screen bg-white flex items-center justify-center font-bold text-xl uppercase animate-pulse vhs-text">Loading...</div>}>
         <AppContent />
       </Suspense>

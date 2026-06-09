@@ -2,6 +2,18 @@
 
 export type Language = 'pt' | 'en';
 
+/** The role buckets a film can be tagged with — the single source of truth
+    for portfolio filtering. A film can belong to several at once. */
+export type FilmCategory = 'dir' | 'photo' | 'edit' | 'script' | 'assist' | 'prod';
+
+/** A spotlight shown as a badge on the film: an award won, a notable premiere,
+    or an official selection. (A premiere can matter more than a minor award.) */
+export type HighlightType = 'award' | 'premiere' | 'selection';
+export interface FilmHighlight {
+  type: HighlightType;
+  label: string;
+}
+
 export interface Content {
   menu_home: string;
   menu_films: string;
@@ -42,6 +54,7 @@ export interface Content {
   filter_edit: string;
   filter_assist: string;
   filter_script: string;
+  filter_prod: string;
   
   // Sorting & Controls
   sort_label: string;
@@ -51,6 +64,20 @@ export interface Content {
   sort_za: string;
   year_label: string;
   year_all: string;
+
+  // Search & extra filtering
+  search_label: string;
+  search_placeholder: string;
+  genre_label: string;
+  genre_all: string;
+  clear_filters: string;
+  results_label: string;
+  no_results: string;
+
+  // Highlight badge kickers
+  hl_award: string;
+  hl_premiere: string;
+  hl_selection: string;
 
   // Status & Stamps
   status_pre: string;
@@ -134,13 +161,12 @@ export interface FilmData {
   type: string;
   year: string;
   role: string;
-  roleType: 'dir' | 'photo' | 'edit';
+  categories: FilmCategory[];
   desc: string;
   img: string;
   videoEmbed?: string;
   logo?: string; 
-  award?: string;
-  stickerStyle?: 'circle' | 'star' | 'square';
+  highlights?: FilmHighlight[];
   
   // New Property for Student Films
   isStudentProject?: boolean;

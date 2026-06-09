@@ -1,3 +1,4 @@
+'use client';
 
 import React, { useState } from 'react';
 import { useLanguage } from '../LanguageContext';
@@ -37,7 +38,7 @@ const Criticism: React.FC = () => {
           </button>
       </div>
 
-        <div className={`max-w-[1300px] w-full mx-auto px-6 relative z-10 ${isExpanded ? 'block' : 'hidden md:block'}`}>
+        <div className={`max-w-[1300px] w-full mx-auto px-6 lg:pr-[200px] xl:pr-[240px] relative z-10 ${isExpanded ? 'block' : 'hidden md:block'}`}>
             <div className="border-4 border-white p-6 md:p-12 relative shadow-[10px_10px_0px_#000] bg-navy">
                 {/* Decorative Bolts */}
                 <div className="absolute top-2 left-2 w-3 h-3 bg-white rounded-full"></div>
@@ -61,7 +62,7 @@ const Criticism: React.FC = () => {
                     {/* Right: Info */}
                     <div className="w-full md:w-2/3 text-center md:text-left">
                         <h2 className="font-mono font-bold text-yellow text-sm tracking-widest uppercase mb-2">
-                            /// {t.crit_title} ///
+                            {'/// '}{t.crit_title}{' ///'}
                         </h2>
                         <h3 className="font-title font-bold italic text-4xl md:text-5xl mb-6">
                             {t.crit_subtitle}

@@ -1,5 +1,7 @@
+'use client';
 import React, { useEffect, useState } from 'react';
 import { zineImages } from '../data';
+import { useSwipeNav } from '../lib/useSwipeNav';
 
 interface ZineGalleryProps {
   isOpen: boolean;
@@ -41,6 +43,9 @@ const ZineGallery: React.FC<ZineGalleryProps> = ({ isOpen, onClose }) => {
     setIndex(i);
   };
 
+  // Robust trackpad / touch swipe → next / previous zine page.
+  const swipe = useSwipeNav(change);
+
   // Handle ESC key and Arrows
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -70,8 +75,9 @@ const ZineGallery: React.FC<ZineGalleryProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div 
+    <div
         onClick={handleBackdropClick}
+        {...swipe}
         className={`fixed top-0 left-0 w-full h-full bg-[#1a1a1a] z-[100001] flex flex-col transition-opacity duration-300 ease-in-out ${isVisible ? 'opacity-100' : 'opacity-0'}`}
     >
       {/* Background Grid Pattern */}

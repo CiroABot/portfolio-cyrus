@@ -1,26 +1,33 @@
+'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import Image from 'next/image';
 import { useLanguage } from '../LanguageContext';
 import { filmsData } from '../data';
-import { FilmData } from '../types';
+import { FilmData, FilmCategory, FilmHighlight, HighlightType } from '../types';
 
 interface FilmsProps {
   onOpenModal: (film: FilmData) => void;
 }
 
-type FilterType = 'all' | 'dir' | 'photo' | 'edit' | 'assist' | 'script';
+type FilterType = 'all' | FilmCategory;
 type SortOption = 'newest' | 'oldest' | 'az' | 'za';
 
-/* 
+/* Order the category filters appear in. Only the ones actually used by at
+   least one film are shown (derived automatically from the data below). */
+const CATEGORY_ORDER: FilmCategory[] = ['dir', 'photo', 'script', 'edit', 'assist', 'prod'];
+
+/*
   COLOR PALETTE (PASTEL VARIANTS)
 */
 const filterConfig: Record<FilterType, { color: string; labelKey: string }> = {
     all: { color: 'bg-black text-white', labelKey: 'filter_all' },
-    dir: { color: 'bg-teal text-black', labelKey: 'filter_dir' }, 
+    dir: { color: 'bg-teal text-black', labelKey: 'filter_dir' },
     photo: { color: 'bg-yellow text-black', labelKey: 'filter_photo' },
     edit: { color: 'bg-rose text-black', labelKey: 'filter_edit' },
     assist: { color: 'bg-navy text-white', labelKey: 'filter_assist' },
-    script: { color: 'bg-muted text-white', labelKey: 'filter_script' }
+    script: { color: 'bg-muted text-white', labelKey: 'filter_script' },
+    prod: { color: 'bg-hero text-white', labelKey: 'filter_prod' }
 };
 
 // HELPER: Match colors with Pastel Variants for Tags
@@ -39,93 +46,67 @@ const getRoleTagColor = (roleName: string): string => {
     const postKeywords = ['edit', 'mont', 'vfx', 'color', 'finaliz', 'post', 'pós'];
     if (postKeywords.some(k => lower.includes(k))) return 'bg-[#e8b2d2] text-black border-black';
 
+    const prodKeywords = ['produ', 'distrib', 'product'];
+    if (prodKeywords.some(k => lower.includes(k))) return 'bg-[#c7c9f0] text-black border-black';
+
     const scriptKeywords = ['roteir', 'screen', 'writ', 'argum'];
     if (scriptKeywords.some(k => lower.includes(k))) return 'bg-[#a5add6] text-black border-black';
 
     return 'bg-white text-black border-black';
 };
 
-// HELPER: Generate Rosette/Seal SVG Path
-const getRosettePath = (cx: number, cy: number, outerRadius: number, innerRadius: number, points: number) => {
-    let path = "";
-    const angleStep = (Math.PI * 2) / points;
+// HELPER: split a role string into individual tags (comma / slash / & / "e" / "and").
+const splitRoles = (role: string): string[] =>
+    role.split(/\s*(?:,|\/|&|\se\s|\sand\s)\s*/i).map((r) => r.trim()).filter(Boolean);
 
-    for (let i = 0; i < points; i++) {
-        const angle = i * angleStep;
-        const nextAngle = (i + 1) * angleStep;
-        
-        // Point on outer circle
-        const x1 = cx + Math.cos(angle) * outerRadius;
-        const y1 = cy + Math.sin(angle) * outerRadius;
+// HELPER: accent- and case-insensitive normaliser for lenient text search.
+const normalize = (s: string): string =>
+    s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
 
-        // Point on inner circle (the valley)
-        const midAngle = angle + (angleStep / 2);
-        const x2 = cx + Math.cos(midAngle) * innerRadius;
-        const y2 = cy + Math.sin(midAngle) * innerRadius;
-
-        if (i === 0) {
-            path += `M ${x1} ${y1}`;
-        } else {
-            path += ` L ${x1} ${y1}`;
-        }
-        path += ` L ${x2} ${y2}`;
-    }
-    path += " Z";
-    return path;
+// COMPONENT: Festival-laurel highlight — award / premiere / selection.
+// A real laurel wreath (public/assets/Laurel_Wreath.svg) framing the festival
+// name in the centre. Rendered WHITE with a dark outline (the subtitle trick)
+// so it stays legible over any photo — grid view AND list view.
+const HL_KICKER: Record<HighlightType, 'hl_award' | 'hl_premiere' | 'hl_selection'> = {
+    award: 'hl_award',
+    premiere: 'hl_premiere',
+    selection: 'hl_selection',
 };
 
-// COMPONENT: Sticker for Awards (Redesigned - Left Side, Rosette)
-const AwardSticker: React.FC<{ text: string; style?: 'circle' | 'star' | 'square' }> = ({ text, style = 'star' }) => {
-    
-    // 1. CIRCLE STYLE (Alternative)
-    if (style === 'circle') {
-        return (
-            <div className="absolute top-[-10px] left-[-10px] z-[70] w-[100px] h-[100px] flex items-center justify-center pointer-events-none group-hover:scale-105 transition-transform duration-300">
-                <div className="w-full h-full rounded-full bg-teal border-2 border-black shadow-[2px_2px_0px_rgba(0,0,0,1)] flex items-center justify-center p-4 text-center -rotate-12">
-                    <span className="font-mono font-bold text-[9px] leading-tight uppercase text-black break-words w-full">
-                        {text}
-                    </span>
-                </div>
-            </div>
-        );
-    }
+const LAUREL_OUTLINE =
+    '[filter:invert(1)_drop-shadow(0_0_1px_rgba(0,0,0,0.95))_drop-shadow(0_0_1px_rgba(0,0,0,0.95))]';
 
-    // 2. SQUARE STYLE (Alternative)
-    if (style === 'square') {
-        return (
-            <div className="absolute top-[-5px] left-[-5px] z-[70] w-[100px] h-auto pointer-events-none group-hover:scale-105 transition-transform duration-300">
-                <div className="bg-white border-2 border-black shadow-[3px_3px_0px_rgba(0,0,0,1)] p-2 text-center -rotate-3 transform origin-top-left">
-                    <div className="border border-black p-1">
-                         <span className="block font-mono font-bold text-[9px] leading-tight uppercase text-black">
-                            {text}
-                        </span>
-                    </div>
-                    {/* Fake Tape */}
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-4 bg-yellow/80 border border-black/20 rotate-1"></div>
-                </div>
-            </div>
-        );
-    }
-    
-    // 3. ROSETTE / SEAL STYLE (Default 'star')
+const LaurelHighlight: React.FC<{ highlight: FilmHighlight; size?: 'sm' | 'md'; t: any }> = ({ highlight, size = 'md', t }) => {
+    const sm = size === 'sm';
+    const kicker = t[HL_KICKER[highlight.type]];
     return (
-        <div className="absolute top-[-12px] left-[-12px] z-[70] w-[110px] h-[110px] pointer-events-none group-hover:scale-105 transition-transform duration-300 drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]">
-             <div className="relative w-full h-full flex items-center justify-center">
-                {/* 30-point Rosette Seal */}
-                <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full fill-yellow stroke-black stroke-[1.5px]">
-                    <path d={getRosettePath(50, 50, 48, 42, 30)} />
-                    {/* Inner circle for decoration */}
-                    <circle cx="50" cy="50" r="38" className="fill-none stroke-black stroke-[0.5px] opacity-30" />
-                </svg>
-                
-                {/* Text Container with Safe Padding */}
-                <div className="relative z-10 w-full h-full flex items-center justify-center p-6 text-center transform -rotate-12">
-                    <span className="font-mono font-bold text-[9px] leading-[1.1] uppercase text-black line-clamp-4 overflow-hidden text-ellipsis w-full">
-                        {text}
-                    </span>
-                </div>
-             </div>
-        </div>
+        <span
+            className={`relative inline-flex shrink-0 items-center justify-center select-none ${sm ? 'w-[120px] h-[66px]' : 'w-[128px] h-[72px]'}`}
+            title={`${kicker} — ${highlight.label}`}
+        >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+                src="/assets/Laurel_Wreath.svg"
+                alt=""
+                aria-hidden="true"
+                draggable={false}
+                className={`pointer-events-none absolute inset-0 h-full w-full object-contain ${sm ? '' : LAUREL_OUTLINE}`}
+            />
+            {/* List = solid black, no shadow (crisp on the white rows).
+                Grid = white with a dark outline (legible over any photo). */}
+            <span
+                className={`relative z-10 flex flex-col items-center justify-center text-center font-mono uppercase ${
+                    sm
+                        ? 'text-black px-[20%] gap-[1px]'
+                        : 'text-white [text-shadow:0_0_2px_#000,0_0_3px_#000] px-[22%] gap-[2px]'
+                }`}
+            >
+                <span className={`font-black leading-none ${sm ? 'text-[7px]' : 'text-[7px]'}`}>{kicker}</span>
+                <span className={`font-bold leading-[1.05] line-clamp-3 ${sm ? 'text-[8px]' : 'text-[7px] md:text-[8px]'}`}>
+                    {highlight.label}
+                </span>
+            </span>
+        </span>
     );
 };
 
@@ -206,7 +187,7 @@ const FilmCard: React.FC<{ film: FilmData; index: number; onOpenModal: (f: FilmD
     const intervalRef = useRef<number | null>(null);
     const stillIndex = useRef(0);
 
-    const roleList = film.role.split(/[,/&]+/).map(r => r.trim());
+    const roleList = splitRoles(film.role);
     const isPre = film.year === t.status_pre;
     const hasStills = film.stills && film.stills.length > 0;
 
@@ -231,19 +212,25 @@ const FilmCard: React.FC<{ film: FilmData; index: number; onOpenModal: (f: FilmD
             onClick={() => onOpenModal(film)}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className={`group interactive-target w-full md:w-[calc(50%-1.5rem)] lg:w-[calc(33.33%-25px)] xl:w-[calc(25%-25px)] min-w-[250px] max-w-[400px] bg-white border-3 border-black p-4 pb-8 shadow-pop transition-all duration-300 relative z-50 hover:scale-[1.02] md:hover:scale-105 hover:z-[60] hover:shadow-pop-hover hover:rotate-0 ${index % 2 === 0 ? 'lg:rotate-2' : 'lg:-rotate-1 md:mt-10'}`}
+            className={`group interactive-target w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)] min-w-[280px] max-w-[460px] bg-white border-3 border-black p-4 pb-6 shadow-pop transition-all duration-300 relative z-50 hover:scale-[1.02] md:hover:scale-105 hover:z-[60] hover:shadow-pop-hover hover:rotate-0 ${index % 2 === 0 ? 'lg:rotate-2' : 'lg:-rotate-1 md:mt-10'}`}
         >
-             {/* AWARD STICKER - Positioned Top Left */}
-             {film.award && (
-                <AwardSticker text={film.award} style={film.stickerStyle || 'star'} />
-             )}
-
-            <div className="w-full h-[250px] overflow-hidden border-b-3 border-black mb-4 bg-black relative">
-                <img 
-                    src={activeImg} 
-                    alt={film.title} 
-                    className="w-full h-full object-cover filter md:grayscale md:contrast-125 transition-all duration-300 group-hover:filter-none group-hover:scale-105 group-hover:saturate-150" 
+            <div className="w-full aspect-video overflow-hidden border-b-3 border-black mb-4 bg-black relative">
+                <Image
+                    src={activeImg}
+                    alt={film.title}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover filter md:grayscale md:contrast-125 transition-all duration-300 group-hover:filter-none group-hover:scale-105 group-hover:saturate-150"
                 />
+
+                {/* HIGHLIGHT BADGES (award / premiere / selection) — top left */}
+                {film.highlights && film.highlights.length > 0 && (
+                    <div className="absolute top-2 left-2 z-[30] flex flex-col items-start gap-1.5 max-w-[calc(100%-1rem)] pointer-events-none">
+                        {film.highlights.map((h, i) => (
+                            <LaurelHighlight key={i} highlight={h} size="md" t={t} />
+                        ))}
+                    </div>
+                )}
 
                 {/* Student Stamp Overlay (MOVED TO CORNER - SUBTLE BUT VISIBLE) */}
                 {film.isStudentProject && (
@@ -279,8 +266,8 @@ const FilmCard: React.FC<{ film: FilmData; index: number; onOpenModal: (f: FilmD
 // RENDER: Compact View Item (Table View - Uniform Height)
 const CompactFilmItem: React.FC<{ film: FilmData; index: number; onOpenModal: (f: FilmData) => void }> = ({ film, index, onOpenModal }) => {
      const { t } = useLanguage();
-     const roleList = film.role.split(/[,/&]+/).map(r => r.trim());
-     const isPre = film.year === t.status_pre; 
+     const roleList = splitRoles(film.role);
+     const isPre = film.year === t.status_pre;
 
      return (
         <div 
@@ -325,13 +312,12 @@ const CompactFilmItem: React.FC<{ film: FilmData; index: number; onOpenModal: (f
                             )}
                         </div>
                         
-                        {/* AWARD STAMP (Compact Version) */}
-                        {film.award && (
-                            <div className="hidden md:inline-flex flex-shrink-0 items-center gap-1 border border-yellow-600 bg-yellow/10 px-2 py-0.5 rounded-sm shadow-sm md:ml-1">
-                                <span className="text-yellow-600 text-sm leading-none">★</span>
-                                <span className="font-mono font-bold text-[9px] text-yellow-800 uppercase tracking-tight truncate max-w-[150px]">
-                                    {film.award}
-                                </span>
+                        {/* HIGHLIGHT BADGES (award / premiere / selection) */}
+                        {film.highlights && film.highlights.length > 0 && (
+                            <div className="flex flex-wrap items-center gap-1.5 md:ml-1 flex-shrink-0">
+                                {film.highlights.map((h, i) => (
+                                    <LaurelHighlight key={i} highlight={h} size="sm" t={t} />
+                                ))}
                             </div>
                         )}
                     </div>
@@ -360,59 +346,95 @@ const Films: React.FC<FilmsProps> = ({ onOpenModal }) => {
   
   const [sortOption, setSortOption] = useState<SortOption>('newest');
   const [yearFilter, setYearFilter] = useState<string>('all');
+  const [genreFilter, setGenreFilter] = useState<string>('all');
+  const [search, setSearch] = useState('');
 
-  const allFilms = filmsData(lang);
+  // Resolve the catalogue for the active language (memoised per language).
+  const allFilms = useMemo(() => filmsData(lang), [lang]);
+  const preLabel = t.status_pre;
 
-  const uniqueYears = Array.from(new Set(allFilms.map(f => f.year))).sort((a, b) => {
-      if (a === t.status_pre) return -1;
-      if (b === t.status_pre) return 1;
-      return parseInt(b) - parseInt(a);
-  });
-  
-  let processedFilms = allFilms.filter(film => {
-      if (activeFilter === 'all') return true;
+  // Distinct years for the dropdown (pre-production sorts to the very top).
+  const uniqueYears = useMemo(
+    () =>
+      Array.from(new Set(allFilms.map((f) => f.year))).sort((a, b) => {
+        if (a === preLabel) return -1;
+        if (b === preLabel) return 1;
+        return parseInt(b) - parseInt(a);
+      }),
+    [allFilms, preLabel]
+  );
 
-      const roles = film.role.toLowerCase().split(/[,/&]+/).map(r => r.trim());
-      
-      const checkSegment = (segment: string, type: FilterType): boolean => {
-          const isPhoto = segment.includes('foto') || segment.includes('photo') || segment.includes('dop') || segment.includes('cinematography');
-          const isAssist = ['assist', 'ad', 'ac', '1º', '2º', '1st', '2nd'].some(k => segment.includes(k));
-          const isScript = segment.includes('roteir') || segment.includes('screen') || segment.includes('writ');
-          const isDir = (segment.includes('dir') || segment.includes('realiza')) && !isPhoto && !isAssist;
-          const isEdit = segment.includes('edit') || segment.includes('montag') || segment.includes('vfx') || segment.includes('color') || segment.includes('finaliz');
+  // Genres come from the part of `kind` before the "•" (e.g. "Ficção",
+  // "Documentário", "Experimental"). Derived automatically from the catalogue.
+  const genres = useMemo(() => {
+    const set = new Set<string>();
+    allFilms.forEach((f) => {
+      f.type
+        .split('•')[0]
+        .split('/')
+        .forEach((tok) => {
+          const g = tok.trim();
+          if (g) set.add(g);
+        });
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [allFilms]);
 
-          switch(type) {
-              case 'dir': return isDir;
-              case 'photo': return isPhoto;
-              case 'edit': return isEdit;
-              case 'assist': return isAssist;
-              case 'script': return isScript;
-              default: return false;
-          }
-      };
-      return roles.some(roleSegment => checkSegment(roleSegment, activeFilter));
-  });
+  // Only show category filters that at least one film actually uses.
+  const availableFilters = useMemo(() => {
+    const present = new Set<FilmCategory>();
+    allFilms.forEach((f) => f.categories.forEach((c) => present.add(c)));
+    return CATEGORY_ORDER.filter((c) => present.has(c));
+  }, [allFilms]);
 
-  if (yearFilter !== 'all') {
-      processedFilms = processedFilms.filter(film => film.year === yearFilter);
-  }
+  // Filter (category → genre → year → text search) then sort.
+  // Memoised; never mutates the source list.
+  const processedFilms = useMemo(() => {
+    const tokens = normalize(search).split(/\s+/).filter(Boolean);
+    const yearValue = (y: string) => (y === preLabel ? 9999 : parseInt(y) || 0);
 
-  processedFilms.sort((a, b) => {
-      const getYearValue = (yearStr: string) => {
-          if (yearStr === t.status_pre) return 9999; 
-          return parseInt(yearStr) || 0;
-      };
-      const yearA = getYearValue(a.year);
-      const yearB = getYearValue(b.year);
-
-      switch (sortOption) {
-          case 'newest': return yearB - yearA;
-          case 'oldest': return yearA - yearB;
-          case 'az': return a.title.localeCompare(b.title);
-          case 'za': return b.title.localeCompare(a.title);
-          default: return 0;
+    const filtered = allFilms.filter((film) => {
+      if (activeFilter !== 'all' && !film.categories.includes(activeFilter)) return false;
+      if (genreFilter !== 'all' && !film.type.split('•')[0].toLowerCase().includes(genreFilter.toLowerCase())) return false;
+      if (yearFilter !== 'all' && film.year !== yearFilter) return false;
+      if (tokens.length) {
+        // Lenient search: accent-insensitive, across many fields, every word must match.
+        const haystack = normalize(
+          [
+            film.title,
+            film.desc,
+            film.role,
+            film.type,
+            film.production ?? '',
+            (film.credits ?? []).map((c) => `${c.name} ${c.role}`).join(' '),
+            (film.highlights ?? []).map((h) => h.label).join(' '),
+          ].join(' ')
+        );
+        if (!tokens.every((tok) => haystack.includes(tok))) return false;
       }
-  });
+      return true;
+    });
+
+    return filtered.sort((a, b) => {
+      switch (sortOption) {
+        case 'newest': return yearValue(b.year) - yearValue(a.year);
+        case 'oldest': return yearValue(a.year) - yearValue(b.year);
+        case 'az': return a.title.localeCompare(b.title);
+        case 'za': return b.title.localeCompare(a.title);
+        default: return 0;
+      }
+    });
+  }, [allFilms, activeFilter, genreFilter, yearFilter, search, sortOption, preLabel]);
+
+  const anyFilterActive =
+    activeFilter !== 'all' || genreFilter !== 'all' || yearFilter !== 'all' || search.trim() !== '';
+
+  const clearFilters = () => {
+    setActiveFilter('all');
+    setGenreFilter('all');
+    setYearFilter('all');
+    setSearch('');
+  };
 
   const FilterButton: React.FC<{ type: FilterType, isMobile?: boolean }> = ({ type, isMobile = false }) => {
       const isActive = activeFilter === type;
@@ -453,7 +475,7 @@ const Films: React.FC<FilmsProps> = ({ onOpenModal }) => {
           </button>
       </div>
 
-      <div className={`w-full max-w-[1450px] mx-auto px-5 md:px-10 relative z-10 ${isExpanded ? 'block' : 'hidden md:block'}`}>
+      <div className={`w-full max-w-[1450px] mx-auto px-5 md:px-10 lg:pr-[200px] xl:pr-[240px] relative z-10 ${isExpanded ? 'block' : 'hidden md:block'}`}>
         <div className="hidden md:block mb-8">
             <h2 className="font-title font-bold text-5xl md:text-8xl text-left relative inline-block uppercase leading-[0.85] vhs-text">
             {t.title_films}
@@ -461,55 +483,102 @@ const Films: React.FC<FilmsProps> = ({ onOpenModal }) => {
             </h2>
         </div>
 
-        <div className="flex flex-col xl:flex-row gap-6 mb-8 xl:items-end">
-            <div className="w-full md:w-fit order-2 xl:order-1">
-                <div className="hidden md:flex bg-white border-3 border-black shadow-[6px_6px_0px_#000] flex-wrap max-w-full w-fit overflow-hidden">
+        <div className="flex flex-col gap-5 mb-8">
+
+            {/* ROLE / CATEGORY TOOLBAR — own row, scrolls horizontally if it overflows */}
+            <div className="w-full">
+                <div className="hidden md:flex bg-white border-3 border-black shadow-[6px_6px_0px_#000] w-fit max-w-full overflow-x-auto hide-scrollbar">
                     <FilterButton type="all" />
-                    <FilterButton type="dir" />
-                    <FilterButton type="photo" />
-                    <FilterButton type="script" />
-                    <FilterButton type="edit" />
-                    <FilterButton type="assist" />
+                    {availableFilters.map((c) => <FilterButton key={c} type={c} />)}
                 </div>
                 <div className="md:hidden w-full overflow-x-auto pb-2 hide-scrollbar flex items-center pl-1">
                     <FilterButton type="all" isMobile />
-                    <FilterButton type="dir" isMobile />
-                    <FilterButton type="photo" isMobile />
-                    <FilterButton type="script" isMobile />
-                    <FilterButton type="edit" isMobile />
-                    <FilterButton type="assist" isMobile />
+                    {availableFilters.map((c) => <FilterButton key={c} type={c} isMobile />)}
                     <div className="w-2 flex-shrink-0"></div>
                 </div>
             </div>
 
-            {/* 
-                FIXED Z-INDEX ISSUE: 
-                Increased z-index to 80 on the filter container. 
-                FilmCards have z-50 (z-60 on hover), so this container (and its dropdowns) 
-                will now sit comfortably ON TOP of the cards. 
-            */}
-            <div className="w-full xl:w-auto flex flex-col md:flex-row gap-4 order-1 xl:order-2 z-[80]">
-                 <CustomSelect 
+            {/* SEARCH + GENRE + SORT + YEAR + CLEAR + RESULTS COUNT
+                (z-80 so the open dropdowns sit above the film cards below) */}
+            <div className="flex flex-col md:flex-row md:flex-wrap gap-4 md:items-end z-[80]">
+
+                {/* Text search */}
+                <div className="w-full md:w-auto md:flex-grow md:max-w-[300px]">
+                    <label className="block font-mono font-bold text-[10px] uppercase mb-1 ml-1 text-gray-500">{t.search_label}</label>
+                    <div className="relative">
+                        <input
+                            type="text"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder={t.search_placeholder}
+                            className="w-full bg-white border-3 border-black pl-4 pr-9 py-3 md:py-2 font-mono font-bold text-sm md:text-base uppercase shadow-[4px_4px_0px_#000] interactive-target placeholder:text-gray-300 placeholder:normal-case focus:outline-none focus:translate-x-[2px] focus:translate-y-[2px] focus:shadow-[2px_2px_0px_#000] transition-all"
+                        />
+                        {search && (
+                            <button
+                                onClick={() => setSearch('')}
+                                aria-label="Clear search"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center bg-black text-white text-xs font-bold interactive-target hover:bg-rose transition-colors"
+                            >
+                                ✕
+                            </button>
+                        )}
+                    </div>
+                </div>
+
+                <CustomSelect
                     label={t.sort_label}
                     value={sortOption}
                     onChange={(val) => setSortOption(val as SortOption)}
+                    widthClass="w-full md:w-[200px]"
                     options={[
                         { value: "newest", label: t.sort_newest },
                         { value: "oldest", label: t.sort_oldest },
                         { value: "az", label: t.sort_az },
                         { value: "za", label: t.sort_za }
                     ]}
-                 />
-                 <CustomSelect 
+                />
+
+                {genres.length > 1 && (
+                    <CustomSelect
+                        label={t.genre_label}
+                        value={genreFilter}
+                        onChange={(val) => setGenreFilter(val)}
+                        widthClass="w-full md:w-[190px]"
+                        options={[
+                            { value: "all", label: t.genre_all },
+                            ...genres.map((g) => ({ value: g, label: g }))
+                        ]}
+                    />
+                )}
+
+                <CustomSelect
                     label={t.year_label}
                     value={yearFilter}
                     onChange={(val) => setYearFilter(val)}
-                    widthClass="w-full md:w-[160px]"
+                    widthClass="w-full md:w-[150px]"
                     options={[
                         { value: "all", label: t.year_all },
                         ...uniqueYears.map(year => ({ value: year, label: year }))
                     ]}
-                 />
+                />
+
+                {/* Clear all filters (only when something is active) */}
+                {anyFilterActive && (
+                    <button
+                        onClick={clearFilters}
+                        className="w-full md:w-auto self-stretch md:self-end bg-rose text-white border-3 border-black px-4 py-3 md:py-2 font-mono font-bold text-sm uppercase shadow-[4px_4px_0px_#000] interactive-target active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_#000] transition-all flex items-center justify-center gap-2 whitespace-nowrap"
+                    >
+                        ✕ {t.clear_filters}
+                    </button>
+                )}
+
+                {/* Results count */}
+                <div className="md:ml-auto self-stretch md:self-end">
+                    <span className="block font-mono font-bold text-[10px] uppercase mb-1 mr-1 text-gray-500 md:text-right">{t.results_label}</span>
+                    <div className="bg-black text-white border-3 border-black px-4 py-3 md:py-2 font-mono font-bold text-sm uppercase shadow-[4px_4px_0px_#000] text-center whitespace-nowrap">
+                        {processedFilms.length} / {allFilms.length}
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -531,8 +600,16 @@ const Films: React.FC<FilmsProps> = ({ onOpenModal }) => {
           )}
 
           {processedFilms.length === 0 && (
-             <div className="w-full text-center py-20 font-mono text-xl opacity-50 uppercase border-2 border-dashed border-black bg-white shadow-pop-sm">
-                 [ NO SIGNAL DETECTED FOR THIS FREQUENCY ]
+             <div className="w-full flex flex-col items-center gap-6 py-20 border-2 border-dashed border-black bg-white shadow-pop-sm">
+                 <span className="text-center font-mono text-xl opacity-50 uppercase px-4">{t.no_results}</span>
+                 {anyFilterActive && (
+                    <button
+                        onClick={clearFilters}
+                        className="bg-rose text-white border-3 border-black px-6 py-3 font-mono font-bold text-sm uppercase shadow-[4px_4px_0px_#000] interactive-target active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_#000] transition-all flex items-center gap-2"
+                    >
+                        ✕ {t.clear_filters}
+                    </button>
+                 )}
              </div>
           )}
         </div>

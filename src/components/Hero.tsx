@@ -1,5 +1,7 @@
+'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { useLanguage } from '../LanguageContext';
 import { PROFILE_PIC } from '../data';
 
@@ -11,10 +13,13 @@ const Hero: React.FC = () => {
     <div className={`relative ${sizeClasses} aspect-[4/5] group z-10 ${className}`}>
         <div className="absolute inset-0 bg-black translate-x-2 translate-y-2 md:translate-x-4 md:translate-y-4 transition-transform duration-300 group-hover:translate-x-3 group-hover:translate-y-3"></div>
         <div className="absolute inset-0 bg-white border-3 border-black overflow-hidden grayscale contrast-125 hover:grayscale-0 transition-all duration-500">
-                <img 
-                src={PROFILE_PIC} 
-                alt="Ciro Araujo" 
-                className="w-full h-full object-cover"
+                <Image
+                src={PROFILE_PIC}
+                alt="Ciro Araujo"
+                fill
+                priority
+                sizes="(max-width: 1024px) 40vw, 440px"
+                className="object-cover"
             />
             {/* Scanlines */}
             <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-20 bg-[length:100%_2px,3px_100%] pointer-events-none"></div>
@@ -45,7 +50,7 @@ const Hero: React.FC = () => {
           <div className="absolute top-[20%] -left-[10%] w-[40vw] h-[40vw] bg-rose rounded-full mix-blend-multiply opacity-60 blur-[60px]"></div>
       </div>
 
-      <div className="container mx-auto px-6 md:px-12 relative z-10 max-w-[1400px] h-full flex flex-col md:justify-center">
+      <div className="container mx-auto px-6 md:px-12 lg:pr-[200px] xl:pr-[240px] relative z-10 max-w-[1400px] h-full flex flex-col md:justify-center">
         
         {/* --- MAIN GRID LAYOUT --- */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-0 items-center">
@@ -149,7 +154,7 @@ const Hero: React.FC = () => {
 
             {/* RIGHT COLUMN: PHOTO & DESKTOP BLOG CTA */}
             <div className="hidden lg:col-span-5 lg:flex flex-col items-center lg:items-end justify-center relative mt-12 lg:mt-0">
-                <PhotoBlock sizeClasses="w-[340px] md:w-[440px]" />
+                <PhotoBlock sizeClasses="w-[340px] md:w-[440px] lg:w-[330px] xl:w-[440px]" />
 
                 <a href={t.blog_url} target="_blank" rel="noreferrer" className="relative mt-[-40px] mr-[10px] md:mr-[50px] z-20 group interactive-target animate-slide-up" style={{ animationDelay: '0.6s' }}>
                     <div className="bg-rose border-3 border-black px-8 py-5 shadow-[6px_6px_0px_#000] transition-transform group-hover:translate-y-1 group-hover:translate-x-1 group-hover:shadow-[2px_2px_0px_#000] flex items-center gap-4">

@@ -1,0 +1,146 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Reset Global */
+:root {
+  font-family: var(--font-body), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #ffffff;
+  color: #000000;
+  font-weight: 500;
+}
+
+/* Custom Text Selection */
+::selection {
+  background-color: #d17bac; /* rose */
+  color: #ffffff;
+  text-shadow: 2px 2px 0px #000000;
+}
+
+body {
+  overflow-x: hidden !important;
+}
+
+/* Prevent Horizontal Scroll globally */
+html, body {
+  max-width: 100vw;
+  width: 100%;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  /* Stop the macOS/Chrome two-finger horizontal swipe from triggering the
+     browser's back/forward history navigation while interacting with galleries. */
+  overscroll-behavior-x: none;
+}
+
+/* Lenis Scroll Styles */
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #202c60;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #d17bac;
+}
+
+/* Hide scrollbar utility (used by horizontal strips) */
+.hide-scrollbar::-webkit-scrollbar,
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar,
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Classes utilitárias para animação 3D */
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+/*
+   VHS AESTHETIC UTILITIES
+*/
+
+/*
+   PERFORMANCE OPTIMIZATION: GPU BASED NOISE
+   Moves the noise background around rapidly using transform instead of JS repainting.
+*/
+.animate-noise {
+  animation: noise-bg 0.2s steps(3) infinite;
+}
+
+@keyframes noise-bg {
+  0% { transform: translate3d(0, 0, 0); }
+  10% { transform: translate3d(-5%, -5%, 0); }
+  20% { transform: translate3d(-10%, 5%, 0); }
+  30% { transform: translate3d(5%, -10%, 0); }
+  40% { transform: translate3d(-5%, 15%, 0); }
+  50% { transform: translate3d(-10%, 5%, 0); }
+  60% { transform: translate3d(15%, 0, 0); }
+  70% { transform: translate3d(0, 10%, 0); }
+  80% { transform: translate3d(-15%, 0, 0); }
+  90% { transform: translate3d(10%, 5%, 0); }
+  100% { transform: translate3d(5%, 0, 0); }
+}
+
+/* Gallery counter "pop" — a quick visual pulse confirming a photo change
+   (stands in for haptics on platforms without the Vibration API, e.g. macOS). */
+@keyframes gallery-pop {
+  0%   { transform: translateX(-50%) scale(0.7); opacity: 0.3; }
+  60%  { transform: translateX(-50%) scale(1.12); opacity: 1; }
+  100% { transform: translateX(-50%) scale(1); opacity: 1; }
+}
+.animate-gallery-pop {
+  animation: gallery-pop 0.28s ease-out;
+}
+
+/* RGB Shift / Chromatic Aberration Text Effect - SUBTLE VERSION */
+.vhs-text {
+  position: relative;
+  text-shadow: -0.5px 0 rgba(255, 0, 0, 0.4), 0.5px 0 rgba(0, 255, 255, 0.4);
+  animation: vhs-twitch 5s infinite linear alternate-reverse;
+}
+
+@keyframes vhs-twitch {
+  0% {
+    text-shadow: -0.5px 0 rgba(255, 0, 0, 0.4), 0.5px 0 rgba(0, 255, 255, 0.4);
+    transform: skewX(0deg);
+  }
+  5% {
+    text-shadow: -0.5px 0 rgba(255, 0, 0, 0.4), 0.5px 0 rgba(0, 255, 255, 0.4);
+  }
+  6% {
+    text-shadow: -1px 0 rgba(255, 0, 0, 0.4), 1px 0 rgba(0, 255, 255, 0.4);
+    transform: skewX(-0.1deg);
+  }
+  7% {
+    text-shadow: -0.5px 0 rgba(255, 0, 0, 0.4), 0.5px 0 rgba(0, 255, 255, 0.4);
+    transform: skewX(0deg);
+  }
+  100% {
+    text-shadow: -0.5px 0 rgba(255, 0, 0, 0.4), 0.5px 0 rgba(0, 255, 255, 0.4);
+  }
+}

@@ -1,7 +1,12 @@
+'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { FilmData } from '../types';
 import { useLanguage } from '../LanguageContext';
+import { useSwipeNav } from '../lib/useSwipeNav';
+import { toPrivacyEmbed } from '../lib/embed';
 
 interface ModalProps {
   isOpen: boolean;
@@ -12,7 +17,7 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, data, cinemaMode, cinemaUrl }) => {
-  const { t } = useLanguage(); 
+  const { t, lang } = useLanguage();
   const [shouldRender, setShouldRender] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   
@@ -21,6 +26,27 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, data, cinemaMode, cinema
   
   const [mediaMode, setMediaMode] = useState<'video' | 'image'>('video');
   const [activeImage, setActiveImage] = useState<string>('');
+
+  // Gallery navigation (fullscreen photos via arrows / keyboard / trackpad swipe).
+  const galleryImages = useMemo(
+    () => (data ? [data.img, ...(data.stills || []).filter((s) => s !== data.img)] : []),
+    [data]
+  );
+
+  const navigateImage = useCallback(
+    (dir: number) => {
+      setActiveImage((curr) => {
+        if (galleryImages.length < 2) return curr;
+        const idx = galleryImages.indexOf(curr);
+        const base = idx < 0 ? 0 : idx;
+        return galleryImages[(base + dir + galleryImages.length) % galleryImages.length];
+      });
+      setMediaMode('image');
+    },
+    [galleryImages]
+  );
+
+  const swipe = useSwipeNav(navigateImage, mediaMode === 'image' && galleryImages.length > 1);
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
@@ -65,6 +91,18 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, data, cinemaMode, cinema
     };
   }, [isOpen, onClose, theaterMode]);
 
+  // Left/Right arrows navigate the photo gallery (when viewing a still).
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (mediaMode !== 'image') return;
+      if (e.key === 'ArrowLeft') { e.preventDefault(); navigateImage(-1); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); navigateImage(1); }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen, mediaMode, navigateImage]);
+
   if (!shouldRender) return null;
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -83,6 +121,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, data, cinemaMode, cinema
 
   // Determine effective mode (External Cinema Mode OR Internal Theater Mode)
   const isImmersive = cinemaMode || theaterMode;
+
+  const galleryIndex = galleryImages.indexOf(activeImage);
+  const showGalleryNav = mediaMode === 'image' && galleryImages.length > 1;
 
   return (
     <div 
@@ -136,9 +177,16 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, data, cinemaMode, cinema
         {/* --- CONTENT RENDER --- */}
         
         {/* CASE 1: External Cinema URL (Vignettes) */}
-        {cinemaMode ? (
+        {cinemaMode && cinemaUrl ? (
           <div className="w-full max-w-[1400px] aspect-video animate-in fade-in duration-700">
-            <iframe src={cinemaUrl} className="w-full h-full border-none" allow="autoplay; fullscreen" allowFullScreen></iframe>
+            <iframe
+              src={toPrivacyEmbed(cinemaUrl)}
+              title="Video player"
+              className="w-full h-full border-none"
+              allow="autoplay; fullscreen"
+              allowFullScreen
+              referrerPolicy="strict-origin-when-cross-origin"
+            ></iframe>
           </div>
         ) : data ? (
           <>
@@ -146,36 +194,68 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, data, cinemaMode, cinema
                 --- LEFT COLUMN: MEDIA --- 
                 In Theater Mode, this takes up 100% width/height.
             */}
-            <div className={`transition-all duration-500 ease-in-out bg-black flex items-center justify-center relative overflow-hidden group ${
-                isImmersive 
-                ? 'w-full h-full border-none' 
+            <div
+                {...swipe}
+                className={`transition-all duration-500 ease-in-out bg-black flex items-center justify-center relative overflow-hidden group ${
+                isImmersive
+                ? 'w-full h-full border-none'
                 : 'w-full md:w-[55%] h-[250px] md:h-full flex-shrink-0 border-b-3 md:border-b-0 md:border-r-3 border-black'
             }`}>
                
                {/* Show Video */}
                {mediaMode === 'video' && data.videoEmbed ? (
-                 <iframe 
-                    src={data.videoEmbed} 
-                    className={`w-full h-full border-none transition-all duration-700 ${isImmersive ? 'max-w-[1600px] aspect-video' : ''}`} 
+                 <iframe
+                    src={toPrivacyEmbed(data.videoEmbed)}
+                    title={data.title}
+                    className={`w-full h-full border-none transition-all duration-700 ${isImmersive ? 'max-w-[1600px] aspect-video' : ''}`}
                     allowFullScreen
                     allow="autoplay; fullscreen"
+                    referrerPolicy="strict-origin-when-cross-origin"
                  ></iframe>
                ) : (
-                 <img 
-                    src={activeImage} 
-                    alt={data.title} 
-                    className={`w-full h-full transition-all duration-700 ${isImmersive ? 'object-contain' : 'object-contain md:object-cover'}`} 
+                 <Image
+                    src={activeImage}
+                    alt={data.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 55vw"
+                    className={`transition-all duration-700 ${isImmersive ? 'object-contain' : 'object-contain md:object-cover'}`}
                  />
                )}
 
                {/* Watch Trailer Button (Only in Normal Mode + Image View) */}
                {!isImmersive && mediaMode === 'image' && data.videoEmbed && (
-                 <button 
+                 <button
                    onClick={() => setMediaMode('video')}
                    className="absolute bottom-5 right-5 bg-rose text-white border-2 border-black px-4 py-2 font-bold uppercase shadow-pop-sm hover:scale-105 transition-transform z-10 active:scale-95"
                  >
                    {t.modal_watch_trailer}
                  </button>
+               )}
+
+               {/* GALLERY NAVIGATION — prev / next photo (arrows, keyboard, trackpad swipe) */}
+               {showGalleryNav && (
+                 <>
+                   <button
+                     onClick={() => navigateImage(-1)}
+                     aria-label="Previous photo"
+                     className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 flex items-center justify-center bg-black/55 text-white border-2 border-white/70 hover:bg-rose hover:border-black hover:text-white transition-colors text-2xl leading-none backdrop-blur-sm interactive-target active:scale-90"
+                   >
+                     ‹
+                   </button>
+                   <button
+                     onClick={() => navigateImage(1)}
+                     aria-label="Next photo"
+                     className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-11 h-11 flex items-center justify-center bg-black/55 text-white border-2 border-white/70 hover:bg-rose hover:border-black hover:text-white transition-colors text-2xl leading-none backdrop-blur-sm interactive-target active:scale-90"
+                   >
+                     ›
+                   </button>
+                   <div
+                     key={galleryIndex}
+                     className="animate-gallery-pop absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-black/65 text-white border border-white/50 px-3 py-1 font-mono font-bold text-xs backdrop-blur-sm pointer-events-none"
+                   >
+                     <span>{(galleryIndex < 0 ? 0 : galleryIndex) + 1} / {galleryImages.length}</span>
+                   </div>
+                 </>
                )}
             </div>
 
@@ -203,6 +283,14 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, data, cinemaMode, cinema
                         <span className="bg-black text-white px-2 py-0.5">{data.role}</span>
                     </div>
 
+                    {/* Shareable permalink to the standalone film page */}
+                    <Link
+                        href={`/${lang}/films/${data.id}`}
+                        className="inline-flex items-center gap-1 mb-6 font-mono font-bold text-xs uppercase tracking-widest bg-yellow text-black border-2 border-black px-3 py-1.5 shadow-pop-sm hover:bg-black hover:text-yellow transition-colors interactive-target"
+                    >
+                        {lang === 'pt' ? 'Abrir página completa' : 'Open full page'} ↗
+                    </Link>
+
                     {/* Tech Specs Badge Row */}
                     {data.specs && (
                         <div className="flex flex-wrap gap-2 mb-6">
@@ -224,7 +312,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, data, cinemaMode, cinema
                         <div className="mb-8 border-l-4 border-rose pl-5 py-1">
                             <h4 className="font-bold text-sm uppercase text-rose mb-2">{t.modal_director_note}</h4>
                             <p className="font-title italic text-lg md:text-xl leading-snug text-navy">
-                                "{data.directorStatement}"
+                                &ldquo;{data.directorStatement}&rdquo;
                             </p>
                         </div>
                     )}

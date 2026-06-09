@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+'use client';
+import React, { createContext, useContext, ReactNode } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { translations } from './data';
 import { Content, Language } from './types';
 
@@ -10,11 +12,18 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [lang, setLang] = useState<Language>('pt');
+/* Language now lives in the URL (/pt, /en). The active language is passed in
+   from the route (initialLang); toggling navigates to the other locale,
+   preserving the current scroll position. */
+export const LanguageProvider: React.FC<{ children: ReactNode; initialLang: Language }> = ({ children, initialLang }) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const lang = initialLang;
 
   const toggleLang = () => {
-    setLang((prev) => (prev === 'pt' ? 'en' : 'pt'));
+    const next: Language = lang === 'pt' ? 'en' : 'pt';
+    const newPath = pathname.replace(/^\/(pt|en)/, `/${next}`);
+    router.push(newPath, { scroll: false });
   };
 
   const t = translations[lang];

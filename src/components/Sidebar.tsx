@@ -1,3 +1,4 @@
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../LanguageContext';
@@ -61,7 +62,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection }) => {
   // Helper to determine dot styling
   const getDotStyle = (section: string) => {
     const isActive = activeSection === section;
-    const baseClass = "w-4 h-4 rounded-full border-2 border-black z-10 transition-all duration-300 interactive-target cursor-none";
+    const baseClass = "w-4 h-4 rounded-full border-2 border-black z-10 transition-all duration-300 interactive-target";
     
     // Define colors per section
     let activeClass = "";
@@ -96,11 +97,19 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection }) => {
     return `${baseClass} ${isActive ? activeClass : hoverClass} hover:scale-150`;
   };
 
+  const MENU_ITEMS = [
+    { id: 'home', label: t.menu_home, cls: 'bg-muted text-white' },
+    { id: 'films', label: t.menu_films, cls: 'bg-rose text-black' },
+    { id: 'projects', label: t.menu_projects, cls: 'bg-yellow text-black' },
+    { id: 'criticism', label: t.menu_archive, cls: 'bg-navy text-white' },
+    { id: 'contact', label: t.menu_contact, cls: 'bg-teal text-black' },
+  ];
+
   return (
     <>
         {/* --- DESKTOP SIDEBAR (3D Exact Match) --- */}
         <div 
-            className={`fixed right-5 top-1/2 z-[9900] hidden xl:flex -translate-y-1/2 items-center justify-end group transition-opacity duration-300 ${isOverFooter ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'}`}
+            className={`fixed right-5 top-1/2 z-[9900] hidden lg:flex -translate-y-1/2 items-center justify-end group transition-opacity duration-300 ${isOverFooter ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'}`}
         >
             <nav 
                 className="flex flex-row items-stretch gap-4 outline-none backface-hidden antialiased will-change-transform transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)] [transform:perspective(1200px)_rotateY(-25deg)_rotateZ(-2deg)_translateZ(0)] group-hover:[transform:perspective(1200px)_rotateY(0deg)_rotateZ(0deg)_scale(1.02)]"
@@ -134,7 +143,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection }) => {
                     <div className="flex flex-col shadow-[5px_5px_0px_#000]">
                         <button 
                         onClick={toggleLang} 
-                        className="relative block w-full h-10 bg-white border-3 border-black border-b-0 overflow-hidden interactive-target cursor-none group/lang"
+                        className="relative block w-full h-10 bg-white border-3 border-black overflow-hidden interactive-target group/lang"
                         >
                         <div className={`absolute top-[3px] left-[3px] w-[calc(50%-3px)] h-[calc(100%-6px)] border-2 border-black rounded-sm z-10 transition-all duration-300 pointer-events-none bg-cover bg-center ${lang === 'en' ? 'left-[50%] bg-blue-900' : 'bg-green-600'}`}
                             style={{ 
@@ -149,11 +158,19 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection }) => {
                         </div>
                         </button>
 
-                        <button onClick={() => scrollTo('home')} className="block py-3 px-6 font-title text-xl italic text-left bg-muted text-white border-3 border-black border-b-0 transition-all hover:bg-white hover:text-black hover:pl-4 hover:translate-x-[-10px] interactive-target whitespace-nowrap cursor-none">{t.menu_home}</button>
-                        <button onClick={() => scrollTo('films')} className="block py-3 px-6 font-title text-xl italic text-left bg-rose text-black border-3 border-black border-b-0 transition-all hover:bg-white hover:pl-4 hover:translate-x-[-10px] interactive-target whitespace-nowrap cursor-none">{t.menu_films}</button>
-                        <button onClick={() => scrollTo('projects')} className="block py-3 px-6 font-title text-xl italic text-left bg-yellow text-black border-3 border-black border-b-0 transition-all hover:bg-white hover:pl-4 hover:translate-x-[-10px] interactive-target whitespace-nowrap cursor-none">{t.menu_projects}</button>
-                        <button onClick={() => scrollTo('criticism')} className="block py-3 px-6 font-title text-xl italic text-left bg-navy text-white border-3 border-black border-b-0 transition-all hover:bg-white hover:text-black hover:pl-4 hover:translate-x-[-10px] interactive-target whitespace-nowrap cursor-none">{t.menu_archive}</button>
-                        <button onClick={() => scrollTo('contact')} className="block py-3 px-6 font-title text-xl italic text-left bg-teal text-black border-3 border-black transition-all hover:bg-white hover:pl-4 hover:translate-x-[-10px] interactive-target whitespace-nowrap cursor-none">{t.menu_contact}</button>
+                        {MENU_ITEMS.map((item) => {
+                            const active = activeSection === item.id;
+                            return (
+                                <button
+                                    key={item.id}
+                                    onClick={() => scrollTo(item.id)}
+                                    className={`group/item relative -mt-[3px] block py-3 pr-6 pl-8 font-title text-xl italic text-left border-3 border-black transition-colors duration-300 interactive-target whitespace-nowrap ${item.cls} hover:bg-white hover:text-black hover:z-20 ${active ? 'z-10' : ''}`}
+                                >
+                                    <span className={`absolute left-2.5 top-1/2 -translate-y-1/2 text-sm not-italic transition-all duration-300 ${active ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-1.5 group-hover/item:opacity-100 group-hover/item:translate-x-0'}`}>▸</span>
+                                    {item.label}
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
 
@@ -172,7 +189,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection }) => {
         </div>
 
         {/* --- MOBILE & TABLET MENU (Simple & Brutalist) --- */}
-        <div className="xl:hidden">
+        <div className="lg:hidden">
             {/* Floating Hamburger Button */}
             <button 
                 onClick={() => setIsMobileMenuOpen(true)}
