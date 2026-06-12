@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useLanguage } from '../LanguageContext';
 import { PROFILE_PIC } from '../data';
 
@@ -132,10 +133,13 @@ const Sidebar: React.FC<SidebarProps> = ({ activeSection }) => {
                             : 'max-h-[300px] opacity-100 mb-5 border-3'
                       }`}
                     >
-                       <img 
-                          src={PROFILE_PIC} 
-                          alt="Profile" 
-                          className="w-full aspect-square object-cover block" 
+                       <Image
+                          src={PROFILE_PIC}
+                          alt="Profile"
+                          width={240}
+                          height={240}
+                          quality={60}
+                          className="w-full aspect-square object-cover block"
                        />
                     </div>
 

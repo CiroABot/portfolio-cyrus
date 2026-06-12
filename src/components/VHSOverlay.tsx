@@ -6,18 +6,32 @@ interface NoiseProps {
   patternAlpha?: number; // 0-255 intensity
 }
 
-const VHSOverlay: React.FC<NoiseProps> = ({
-  patternAlpha = 15 // Increased slightly as single layer needs to be visible
-}) => {
+/*
+  VHS GRAIN OVERLAY — performance-tuned.
+
+  What was removed (it was the single heaviest effect on the site):
+  - `backdrop-filter: blur(...)` on this fixed full-screen layer forced the GPU
+    to re-blur the ENTIRE viewport on every frame, especially during scroll.
+  - A `mix-blend-screen` full-screen tint layer (invisible at 3% opacity, but
+    it added a blend pass over the whole page every frame).
+
+  What stays — the analog feel, now compositor-only (cheap):
+  - The SAME fine 256px canvas-generated grain texture (not chunky), softened
+    with a tiny blur applied to the grain layer itself (cached by the GPU,
+    since the layer content never changes — only its transform moves).
+  - The layer is viewport+96px instead of 4× the viewport, jittered by pixel
+    offsets ≤96px. Transform-only animation = no repaint, no re-filter.
+*/
+const VHSOverlay: React.FC<NoiseProps> = ({ patternAlpha = 15 }) => {
   const [noiseUrl, setNoiseUrl] = useState<string>('');
 
   useEffect(() => {
-    // 1. Generate Noise ONCE (CPU Heavy operation done only on mount)
+    // Generate the grain ONCE (CPU work only on mount).
     const canvas = document.createElement('canvas');
-    const size = 256; // Smaller texture size is enough for grain
+    const size = 256; // small tile = fine grain when repeated
     canvas.width = size;
     canvas.height = size;
-    
+
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
@@ -34,44 +48,24 @@ const VHSOverlay: React.FC<NoiseProps> = ({
     }
 
     ctx.putImageData(imageData, 0, 0);
-    
-    // 2. Convert to Data URI and save to state
     setNoiseUrl(canvas.toDataURL());
   }, [patternAlpha]);
 
+  if (!noiseUrl) return null;
+
   return (
-    <div 
-      className="fixed inset-0 pointer-events-none z-[200000] overflow-hidden select-none"
-      style={{
-        // Keep the global degradation filter, but ensure it's performant
-        // 'will-change: transform' is not needed on the container, only the noise layer
-        backdropFilter: 'blur(0.6px) contrast(1.05) saturate(1.1)',
-        WebkitBackdropFilter: 'blur(0.6px) contrast(1.05) saturate(1.1)'
-      }}
-    >
-      {/* 
-        OPTIMIZED NOISE LAYER
-        Instead of redrawing canvas every frame (CPU), 
-        we animate a static background image using CSS transforms (GPU).
-        We make it larger than the screen (inset: -50%) so when it moves, 
-        we don't see the edges.
-      */}
-      {noiseUrl && (
-          <div 
-            className="absolute inset-[-50%] w-[200%] h-[200%] animate-noise opacity-60"
-            style={{
-                backgroundImage: `url(${noiseUrl})`,
-                backgroundRepeat: 'repeat',
-                willChange: 'transform' // Hints browser to promote to compositing layer
-            }}
-          />
-      )}
-      
-      {/* 
-        COLOR GRADE (Subtle Black Lift)
-        Washes out pure blacks slightly to enhance VHS feel
-      */}
-      <div className="absolute inset-0 bg-[#1a1a1a] opacity-[0.03] mix-blend-screen"></div>
+    <div className="fixed inset-0 pointer-events-none z-[200000] overflow-hidden select-none">
+      <div
+        className="absolute inset-[-96px] animate-noise opacity-60"
+        style={{
+          backgroundImage: `url(${noiseUrl})`,
+          backgroundRepeat: 'repeat',
+          // Soften the grain itself (the filter output is cached by the GPU —
+          // the layer's content is static; only its transform animates).
+          filter: 'blur(0.4px)',
+          willChange: 'transform',
+        }}
+      />
     </div>
   );
 };

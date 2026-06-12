@@ -92,18 +92,20 @@ html.lenis, html.lenis body {
   animation: noise-bg 0.2s steps(3) infinite;
 }
 
+/* Pixel offsets ≤96px — the grain layer is viewport+96px, so the jitter never
+   exposes an edge, and the layer stays small (it used to be 4× the viewport). */
 @keyframes noise-bg {
   0% { transform: translate3d(0, 0, 0); }
-  10% { transform: translate3d(-5%, -5%, 0); }
-  20% { transform: translate3d(-10%, 5%, 0); }
-  30% { transform: translate3d(5%, -10%, 0); }
-  40% { transform: translate3d(-5%, 15%, 0); }
-  50% { transform: translate3d(-10%, 5%, 0); }
-  60% { transform: translate3d(15%, 0, 0); }
-  70% { transform: translate3d(0, 10%, 0); }
-  80% { transform: translate3d(-15%, 0, 0); }
-  90% { transform: translate3d(10%, 5%, 0); }
-  100% { transform: translate3d(5%, 0, 0); }
+  10% { transform: translate3d(-32px, -48px, 0); }
+  20% { transform: translate3d(-64px, 32px, 0); }
+  30% { transform: translate3d(48px, -64px, 0); }
+  40% { transform: translate3d(-32px, 80px, 0); }
+  50% { transform: translate3d(-72px, 40px, 0); }
+  60% { transform: translate3d(88px, 0, 0); }
+  70% { transform: translate3d(0, 64px, 0); }
+  80% { transform: translate3d(-88px, 0, 0); }
+  90% { transform: translate3d(56px, 40px, 0); }
+  100% { transform: translate3d(32px, 0, 0); }
 }
 
 /* Gallery counter "pop" — a quick visual pulse confirming a photo change

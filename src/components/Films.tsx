@@ -266,21 +266,33 @@ const FilmCard: React.FC<{ film: FilmData; index: number; onOpenModal: (f: FilmD
 // RENDER: Compact View Item (Table View - Uniform Height)
 const CompactFilmItem: React.FC<{ film: FilmData; index: number; onOpenModal: (f: FilmData) => void }> = ({ film, index, onOpenModal }) => {
      const { t } = useLanguage();
+     const [wasHovered, setWasHovered] = useState(false);
      const roleList = splitRoles(film.role);
      const isPre = film.year === t.status_pre;
 
      return (
-        <div 
+        <div
             onClick={() => onOpenModal(film)}
+            onMouseEnter={() => setWasHovered(true)}
             // Enforce height on desktop for uniformity, auto on mobile
             className="group relative w-full border-b-2 border-black bg-white hover:bg-[#f8f8f8] cursor-pointer transition-colors duration-200 overflow-hidden min-h-[90px] md:h-[90px]"
         >
-            {/* Background Hover Effect */}
-            <div 
-                className="absolute inset-0 z-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none grayscale bg-cover bg-center"
-                style={{ backgroundImage: `url(${film.img})` }}
-            />
-            <div className="absolute inset-0 bg-transparent group-hover:bg-[url('https://media.giphy.com/media/oEI9uBYSzLpBK/giphy.gif')] opacity-0 group-hover:opacity-5 mix-blend-overlay pointer-events-none z-0"></div>
+            {/* Background Hover Effect.
+                PERFORMANCE: only mounts after the first hover — the list view
+                loads ZERO film images upfront (it used to fetch every cover at
+                full size via CSS background, ~18 MB for 12 films). The image is
+                served small + optimized by next/image, so this scales to any
+                number of films. */}
+            {wasHovered && (
+                <Image
+                    src={film.img}
+                    alt=""
+                    fill
+                    sizes="800px"
+                    quality={50}
+                    className="z-0 object-cover opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none grayscale"
+                />
+            )}
 
             <div className="relative z-10 flex flex-col md:flex-row items-stretch h-full">
                 

@@ -8,6 +8,8 @@ const nextConfig = {
     // Local images live in /public/assets. Allow modern formats for the
     // optimization pass (next/image will serve AVIF/WebP automatically).
     formats: ['image/avif', 'image/webp'],
+    // Quality tiers used across the site (thumbnails use lower tiers).
+    qualities: [40, 50, 60, 75],
   },
   async headers() {
     return [

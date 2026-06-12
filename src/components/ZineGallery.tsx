@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { zineImages } from '../data';
 import { useSwipeNav } from '../lib/useSwipeNav';
 
@@ -131,11 +132,17 @@ const ZineGallery: React.FC<ZineGalleryProps> = ({ isOpen, onClose }) => {
                     transform: `rotate(${index % 2 === 0 ? '1deg' : '-1deg'})`
                 }}
             >
-                 <img 
-                    src={zineImages[index]} 
-                    alt={`Zine Page ${index + 1}`} 
-                    className="w-full h-full object-cover block"
-                 />
+                 {/* Optimized: serves a ~700px AVIF instead of the multi-MB original. */}
+                 <div className="relative w-full h-full">
+                    <Image
+                        src={zineImages[index]}
+                        alt={`Zine Page ${index + 1}`}
+                        fill
+                        sizes="(max-width: 768px) 90vw, 700px"
+                        className="object-cover"
+                        priority
+                    />
+                 </div>
                  
                  {/* Tape/Sticker effect */}
                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-6 bg-yellow/80 rotate-1 mix-blend-multiply"></div>
@@ -160,7 +167,7 @@ const ZineGallery: React.FC<ZineGalleryProps> = ({ isOpen, onClose }) => {
                         : 'border-[#444] opacity-50 hover:opacity-100 hover:border-white'
                 }`}
             >
-                <img src={img} className="w-full h-full object-cover" alt={`Thumb ${i}`} />
+                <Image src={img} alt={`Thumb ${i}`} fill sizes="48px" quality={40} className="object-cover" />
             </button>
         ))}
       </div>

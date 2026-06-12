@@ -211,7 +211,7 @@ const Projects: React.FC<ProjectsProps> = ({ onOpenZine, onPlayVignette }) => {
                     <div className="bg-black p-6 flex items-center justify-center relative border-b-3 xl:border-b-0 xl:border-r-3 border-black overflow-hidden">
                         <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(#fff 1px, transparent 1px)", backgroundSize: "10px 10px" }}></div>
                         <div className="relative z-10 transform transition-transform duration-500 hover:rotate-0 rotate-2">
-                            <img src={oficina.poster} alt="Cartaz Oficina" className="w-full max-w-[280px] h-auto border-4 border-white shadow-[10px_10px_0px_#d17bac]"/>
+                            <Image src={oficina.poster} alt="Cartaz Oficina" width={2480} height={3543} sizes="280px" quality={60} className="w-full max-w-[280px] h-auto border-4 border-white shadow-[10px_10px_0px_#d17bac]"/>
                         </div>
                     </div>
 

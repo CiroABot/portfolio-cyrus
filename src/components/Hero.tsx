@@ -45,9 +45,19 @@ const Hero: React.FC = () => {
                backgroundSize: "40px 40px" 
              }} 
           />
-          {/* Large Abstract Shapes for Composition */}
-          <div className="absolute -top-[10%] -right-[10%] w-[50vw] h-[50vw] bg-hero rounded-full mix-blend-multiply opacity-80 blur-[80px] animate-float"></div>
-          <div className="absolute top-[20%] -left-[10%] w-[40vw] h-[40vw] bg-rose rounded-full mix-blend-multiply opacity-60 blur-[60px]"></div>
+          {/* Large Abstract Shapes for Composition.
+              PERFORMANCE: these used to be solid circles with blur(80px) — an
+              infinitely-animated, blended, blurred 50vw layer the GPU had to
+              re-filter every frame. A radial-gradient gives the same soft-blob
+              look with zero filter cost (the float animation is transform-only). */}
+          <div
+            className="absolute -top-[10%] -right-[10%] w-[50vw] h-[50vw] mix-blend-multiply opacity-80 animate-float"
+            style={{ background: 'radial-gradient(circle closest-side, #3f43b5 0%, rgba(63,67,181,0.55) 45%, rgba(63,67,181,0) 72%)' }}
+          ></div>
+          <div
+            className="absolute top-[20%] -left-[10%] w-[40vw] h-[40vw] mix-blend-multiply opacity-60"
+            style={{ background: 'radial-gradient(circle closest-side, #d17bac 0%, rgba(209,123,172,0.5) 45%, rgba(209,123,172,0) 72%)' }}
+          ></div>
       </div>
 
       <div className="container mx-auto px-6 md:px-12 lg:pr-[200px] xl:pr-[240px] relative z-10 max-w-[1400px] h-full flex flex-col md:justify-center">

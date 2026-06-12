@@ -49,10 +49,13 @@ const AppContent: React.FC = () => {
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
-    // Initialize Lenis Smooth Scroll
+    // Initialize Lenis Smooth Scroll.
+    // PERFORMANCE/FEEL: `lerp` (exponential follow) instead of a fixed 1.2s
+    // duration — the old setting made the page keep gliding long after the
+    // wheel stopped ("floaty" delay). 0.18 keeps the analog smoothness but
+    // tracks the input almost immediately.
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      lerp: 0.18,
       wheelMultiplier: 1.0,
       touchMultiplier: 2,
     });
@@ -67,48 +70,30 @@ const AppContent: React.FC = () => {
     reqId = requestAnimationFrame(raf);
 
     /*
-      DEFINITIVE SCROLL SPY SOLUTION: CENTER POINT DETECTION
-      Instead of IntersectionObserver (which can be flaky with variable heights),
-      we calculate which section physically covers the exact center of the screen.
+      SCROLL SPY: CENTER POINT DETECTION.
+      Section elements are cached once — the old version did getElementById ×5
+      plus a querySelectorAll for a long-removed ".reveal-on-scroll" feature on
+      EVERY scroll frame.
     */
-    const handleScrollSpy = () => {
-        const sections = ['home', 'films', 'projects', 'criticism', 'contact'];
-        const viewportCenter = window.innerHeight / 2;
-        let currentSection = activeSection;
+    const sectionIds = ['home', 'films', 'projects', 'criticism', 'contact'];
+    const sectionEls = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
 
-        // Iterate sections to find which one contains the viewport center
-        for (const id of sections) {
-            const el = document.getElementById(id);
-            if (el) {
-                const rect = el.getBoundingClientRect();
-                // Check if the section overlaps the center line
-                if (rect.top <= viewportCenter && rect.bottom >= viewportCenter) {
-                    currentSection = id;
-                    break;
-                }
+    const handleScrollSpy = () => {
+        const viewportCenter = window.innerHeight / 2;
+        for (const el of sectionEls) {
+            const rect = el.getBoundingClientRect();
+            if (rect.top <= viewportCenter && rect.bottom >= viewportCenter) {
+                setActiveSection(el.id); // React bails out when unchanged
+                break;
             }
         }
-        
-        setActiveSection(currentSection);
-
-        // Also handle "reveal on scroll" manually for better control
-        document.querySelectorAll('.reveal-on-scroll').forEach(el => {
-            const rect = el.getBoundingClientRect();
-            if (rect.top < window.innerHeight * 0.8) { // Trigger slightly earlier
-                el.classList.add('opacity-100', 'translate-y-0');
-                el.classList.remove('opacity-0', 'translate-y-20');
-            }
-        });
     };
 
-    window.addEventListener('scroll', handleScrollSpy);
+    window.addEventListener('scroll', handleScrollSpy, { passive: true });
     // Trigger once
     handleScrollSpy();
-    
-    // Setup Initial Styles for Reveal
-    document.querySelectorAll('.reveal-on-scroll').forEach(el => {
-        el.classList.add('transition-all', 'duration-700', 'ease-out', 'opacity-0', 'translate-y-20');
-    });
 
     return () => {
         cancelAnimationFrame(reqId);

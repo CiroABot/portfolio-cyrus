@@ -363,21 +363,21 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, data, cinemaMode, cinema
                                 className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide"
                                 data-lenis-prevent
                              >
-                                 <button 
+                                 <button
                                      key="main"
                                      onClick={() => switchToImage(data.img)}
-                                     className={`flex-shrink-0 h-16 w-24 object-cover border-2 cursor-pointer transition-all ${activeImage === data.img && mediaMode === 'image' ? 'border-rose scale-105' : 'border-black opacity-70 hover:opacity-100'}`}
+                                     className={`relative flex-shrink-0 h-16 w-24 overflow-hidden border-2 cursor-pointer transition-all ${activeImage === data.img && mediaMode === 'image' ? 'border-rose scale-105' : 'border-black opacity-70 hover:opacity-100'}`}
                                  >
-                                     <img src={data.img} className="w-full h-full object-cover" alt="Main" />
+                                     <Image src={data.img} alt="Main" fill sizes="96px" quality={50} className="object-cover" />
                                  </button>
-                                 
+
                                  {data.stills.filter(s => s !== data.img).map((still, i) => (
-                                     <button 
+                                     <button
                                          key={i}
                                          onClick={() => switchToImage(still)}
-                                         className={`flex-shrink-0 h-16 w-24 object-cover border-2 cursor-pointer transition-all ${activeImage === still && mediaMode === 'image' ? 'border-rose scale-105' : 'border-black opacity-70 hover:opacity-100'}`}
+                                         className={`relative flex-shrink-0 h-16 w-24 overflow-hidden border-2 cursor-pointer transition-all ${activeImage === still && mediaMode === 'image' ? 'border-rose scale-105' : 'border-black opacity-70 hover:opacity-100'}`}
                                      >
-                                         <img src={still} className="w-full h-full object-cover" alt={`Still ${i}`} />
+                                         <Image src={still} alt={`Still ${i}`} fill sizes="96px" quality={50} className="object-cover" />
                                      </button>
                                  ))}
                              </div>
