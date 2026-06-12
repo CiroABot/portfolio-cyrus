@@ -125,20 +125,26 @@ const ZineGallery: React.FC<ZineGalleryProps> = ({ isOpen, onClose }) => {
             direction === 0 ? 'scale-100 opacity-100' : 
             'animate-in slide-in-from-right duration-300' // Simple class, we refine below
         }`}>
-            {/* The "Paper" Container - A4 Aspect Ratio */}
-            <div 
-                className="relative bg-white p-2 shadow-[20px_20px_0px_rgba(0,0,0,0.5)] border-2 border-white max-h-[70vh] aspect-[1/1.414]"
+            {/* The "Paper" Container - A4 Aspect Ratio.
+                Height is min(70vh, 124vw): height-driven on landscape, width-safe
+                on phones (124vw × 1/1.414 ≈ 88vw). A determinate size is what lets
+                the <Image fill> below actually render (aspect-ratio alone collapsed). */}
+            <div
+                className="relative bg-white p-2 shadow-[20px_20px_0px_rgba(0,0,0,0.5)] border-2 border-white aspect-[1/1.414]"
                 style={{
-                    transform: `rotate(${index % 2 === 0 ? '1deg' : '-1deg'})`
+                    transform: `rotate(${index % 2 === 0 ? '1deg' : '-1deg'})`,
+                    height: 'min(70vh, 124vw)',
                 }}
             >
-                 {/* Optimized: serves a ~700px AVIF instead of the multi-MB original. */}
-                 <div className="relative w-full h-full">
+                 {/* Only the SELECTED page loads (key-remount per index), optimized on
+                     demand: AVIF up to ~1920px for retina sharpness, a fraction of the
+                     multi-MB original. */}
+                 <div className="relative w-full h-full overflow-hidden">
                     <Image
                         src={zineImages[index]}
                         alt={`Zine Page ${index + 1}`}
                         fill
-                        sizes="(max-width: 768px) 90vw, 700px"
+                        sizes="(max-width: 768px) 90vw, 50vw"
                         className="object-cover"
                         priority
                     />
