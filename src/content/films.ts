@@ -114,7 +114,7 @@ export const films: FilmEntry[] = [
 
     cover: "/assets/festadopaulinho_5.jpg",
     stills: [
-      "/assets/festadopaulinho_1.jpg",
+      "/assets/a4518d44-eec1-4e9a-b494-99ebf1eb6609.jpeg",
       "/assets/festadopaulinho_2.jpg",
       "/assets/festadopaulinho_3.jpg",
       "/assets/festadopaulinho_4.jpg",
