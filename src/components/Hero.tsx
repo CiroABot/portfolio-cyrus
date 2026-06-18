@@ -121,7 +121,7 @@ const Hero: React.FC = () => {
                     <div className="flex flex-col md:flex-row gap-4 items-start md:items-stretch">
                         
                         {/* Languages Box */}
-                        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center bg-white/50 backdrop-blur-sm border-2 border-black/10 px-3 py-2 md:px-4 rounded-sm hover:border-black transition-colors w-fit">
+                        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center bg-white/70 border-2 border-black/10 px-3 py-2 md:px-4 rounded-sm hover:border-black transition-colors w-fit">
                             <span className="font-mono text-[10px] font-bold uppercase tracking-widest text-black bg-yellow px-1 border border-black transform -rotate-2">
                             {t.specs_audio}:
                             </span>

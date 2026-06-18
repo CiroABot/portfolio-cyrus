@@ -235,7 +235,7 @@ const FilmCard: React.FC<{ film: FilmData; index: number; onOpenModal: (f: FilmD
                 {/* Student Stamp Overlay (MOVED TO CORNER - SUBTLE BUT VISIBLE) */}
                 {film.isStudentProject && (
                     <div className="absolute bottom-2 left-2 z-[30] pointer-events-none rotate-[-6deg] max-w-[80%]">
-                        <div className="inline-block border-2 border-red-600 bg-white/95 text-red-600 px-2 py-1 font-mono font-bold text-[9px] md:text-[10px] uppercase tracking-widest shadow-[2px_2px_0px_rgba(0,0,0,0.2)] backdrop-blur-sm">
+                        <div className="inline-block border-2 border-red-600 bg-white text-red-600 px-2 py-1 font-mono font-bold text-[9px] md:text-[10px] uppercase tracking-widest shadow-[2px_2px_0px_rgba(0,0,0,0.2)]">
                             {t.student_stamp}
                         </div>
                     </div>

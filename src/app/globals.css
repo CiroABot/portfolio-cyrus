@@ -33,19 +33,8 @@ html, body {
   overscroll-behavior-x: none;
 }
 
-/* Lenis Scroll Styles */
-html.lenis, html.lenis body {
-  height: auto;
-}
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-.lenis.lenis-scrolling iframe {
-  pointer-events: none;
-}
+/* Native scroll only — no smooth-scroll library. Menu jumps use
+   scrollIntoView({behavior:'smooth'}); wheel/trackpad stays instant. */
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
@@ -78,34 +67,6 @@ html.lenis, html.lenis body {
 }
 .backface-hidden {
   backface-visibility: hidden;
-}
-
-/*
-   VHS AESTHETIC UTILITIES
-*/
-
-/*
-   PERFORMANCE OPTIMIZATION: GPU BASED NOISE
-   Moves the noise background around rapidly using transform instead of JS repainting.
-*/
-.animate-noise {
-  animation: noise-bg 0.2s steps(3) infinite;
-}
-
-/* Pixel offsets ≤96px — the grain layer is viewport+96px, so the jitter never
-   exposes an edge, and the layer stays small (it used to be 4× the viewport). */
-@keyframes noise-bg {
-  0% { transform: translate3d(0, 0, 0); }
-  10% { transform: translate3d(-32px, -48px, 0); }
-  20% { transform: translate3d(-64px, 32px, 0); }
-  30% { transform: translate3d(48px, -64px, 0); }
-  40% { transform: translate3d(-32px, 80px, 0); }
-  50% { transform: translate3d(-72px, 40px, 0); }
-  60% { transform: translate3d(88px, 0, 0); }
-  70% { transform: translate3d(0, 64px, 0); }
-  80% { transform: translate3d(-88px, 0, 0); }
-  90% { transform: translate3d(56px, 40px, 0); }
-  100% { transform: translate3d(32px, 0, 0); }
 }
 
 /* Gallery counter "pop" — a quick visual pulse confirming a photo change

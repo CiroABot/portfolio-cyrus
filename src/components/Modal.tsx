@@ -269,7 +269,6 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, data, cinemaMode, cinema
                     ? 'w-0 opacity-0 overflow-hidden p-0' 
                     : 'w-full md:w-[45%] flex-grow overflow-y-auto'
                 }`}
-                data-lenis-prevent
             >
                 {/* Content wrapper to prevent layout shift during transition */}
                 <div className="min-w-[300px] p-6 md:p-8 pb-20">
@@ -361,7 +360,6 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, data, cinemaMode, cinema
                              <h4 className="font-bold uppercase text-navy mb-3">{t.modal_stills}</h4>
                              <div 
                                 className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide"
-                                data-lenis-prevent
                              >
                                  <button
                                      key="main"

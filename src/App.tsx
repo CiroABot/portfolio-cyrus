@@ -1,8 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, Suspense, useRef } from 'react';
-import Lenis from '@studio-freight/lenis';
-// Removed HelmetProvider import
+import React, { useEffect, useState, Suspense } from 'react';
 import { LanguageProvider, useLanguage } from './LanguageContext';
 import Sidebar from './components/Sidebar';
 import Hero from './components/Hero';
@@ -12,7 +10,6 @@ import Criticism from './components/Criticism';
 import Footer from './components/Footer';
 import Modal from './components/Modal';
 import ZineGallery from './components/ZineGallery';
-import VHSOverlay from './components/VHSOverlay';
 import { FilmData, Language } from './types';
 
 const MarqueeStrip: React.FC = () => {
@@ -46,76 +43,37 @@ const AppContent: React.FC = () => {
   const [isZineOpen, setIsZineOpen] = useState(false);
   const [cinemaUrl, setCinemaUrl] = useState<string>('');
   const [isCinemaMode, setIsCinemaMode] = useState(false);
-  const lenisRef = useRef<Lenis | null>(null);
 
+  // Scroll-spy via IntersectionObserver — does ZERO work on the scroll thread,
+  // so wheel/trackpad scrolling stays fully native and snappy (no smooth-scroll
+  // library intercepting and "amortizando" every wheel event).
   useEffect(() => {
-    // Initialize Lenis Smooth Scroll.
-    // PERFORMANCE/FEEL: `lerp` (exponential follow) instead of a fixed 1.2s
-    // duration — the old setting made the page keep gliding long after the
-    // wheel stopped ("floaty" delay). 0.18 keeps the analog smoothness but
-    // tracks the input almost immediately.
-    const lenis = new Lenis({
-      lerp: 0.18,
-      wheelMultiplier: 1.0,
-      touchMultiplier: 2,
-    });
-    lenisRef.current = lenis;
-
-    let reqId: number;
-
-    function raf(time: number) {
-      lenis.raf(time);
-      reqId = requestAnimationFrame(raf);
-    }
-    reqId = requestAnimationFrame(raf);
-
-    /*
-      SCROLL SPY: CENTER POINT DETECTION.
-      Section elements are cached once — the old version did getElementById ×5
-      plus a querySelectorAll for a long-removed ".reveal-on-scroll" feature on
-      EVERY scroll frame.
-    */
-    const sectionIds = ['home', 'films', 'projects', 'criticism', 'contact'];
-    const sectionEls = sectionIds
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => el !== null);
-
-    const handleScrollSpy = () => {
-        const viewportCenter = window.innerHeight / 2;
-        for (const el of sectionEls) {
-            const rect = el.getBoundingClientRect();
-            if (rect.top <= viewportCenter && rect.bottom >= viewportCenter) {
-                setActiveSection(el.id); // React bails out when unchanged
-                break;
-            }
+    const ids = ['home', 'films', 'projects', 'criticism', 'contact'];
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) setActiveSection(e.target.id);
         }
-    };
-
-    window.addEventListener('scroll', handleScrollSpy, { passive: true });
-    // Trigger once
-    handleScrollSpy();
-
+      },
+      // A 0-height band at the viewport's vertical centre: whichever section
+      // crosses that line is the active one.
+      { rootMargin: '-50% 0px -50% 0px' }
+    );
+    ids.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
     return () => {
-        cancelAnimationFrame(reqId);
-        lenis.destroy();
-        window.removeEventListener('scroll', handleScrollSpy);
-        // Restore scrolling when leaving the homepage (e.g. navigating to a film
-        // page while a modal had locked the body) so the next page isn't stuck.
-        document.body.style.overflow = '';
+      observer.disconnect();
+      // Restore scrolling when leaving the homepage (e.g. navigating to a film
+      // page while a modal had locked the body) so the next page isn't stuck.
+      document.body.style.overflow = '';
     };
   }, []);
 
+  // Lock background scroll while a modal / the zine gallery is open.
   useEffect(() => {
-      const lenis = lenisRef.current;
-      if (!lenis) return;
-
-      if (isModalOpen || isZineOpen) {
-          lenis.stop();
-          document.body.style.overflow = 'hidden';
-      } else {
-          lenis.start();
-          document.body.style.overflow = 'auto';
-      }
+    document.body.style.overflow = isModalOpen || isZineOpen ? 'hidden' : '';
   }, [isModalOpen, isZineOpen]);
 
   const handleOpenFilm = (film: FilmData) => {
@@ -139,8 +97,6 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="font-body text-black bg-white w-full relative selection:bg-rose selection:text-white">
-      <VHSOverlay />
-      
       <Sidebar activeSection={activeSection} />
 
       {/* Main Content */}
