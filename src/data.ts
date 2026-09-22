@@ -41,6 +41,7 @@ const cleanLinks = (l: FilmEntry['links']): ExternalLinks | undefined => {
   if (l.imdb.trim()) out.imdb = l.imdb;
   if (l.letterboxd.trim()) out.letterboxd = l.letterboxd;
   if (l.pressKit.trim()) out.pressKit = l.pressKit;
+  if (l.instagram.trim()) out.instagram = l.instagram;
   return Object.keys(out).length ? out : undefined;
 };
 

@@ -165,6 +165,7 @@ export interface ExternalLinks {
   imdb?: string;
   letterboxd?: string;
   pressKit?: string; // URL to PDF or Drive
+  instagram?: string;
 }
 
 export interface FilmData {

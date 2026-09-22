@@ -42,6 +42,7 @@ export interface FilmLinks {
   imdb: string;         // full url, or ''
   letterboxd: string;   // full url, or ''
   pressKit: string;     // full url, or ''
+  instagram: string;    // film / production company Instagram url, or ''
 }
 
 export interface Highlight {

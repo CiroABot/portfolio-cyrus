@@ -150,7 +150,7 @@ export default async function FilmPage({
             )}
 
             {/* External links */}
-            {film.links && (film.links.imdb || film.links.letterboxd || film.links.pressKit) && (
+            {film.links && (
               <div className="flex flex-wrap gap-4 pt-4 border-t-3 border-black">
                 {film.links.imdb && (
                   <a href={film.links.imdb} target="_blank" rel="noreferrer" className="font-title font-bold italic text-xl underline decoration-2 decoration-rose hover:text-rose">IMDb</a>
@@ -160,6 +160,9 @@ export default async function FilmPage({
                 )}
                 {film.links.pressKit && (
                   <a href={film.links.pressKit} target="_blank" rel="noreferrer" className="font-title font-bold italic text-xl underline decoration-2 decoration-navy hover:text-navy">Press Kit (PDF)</a>
+                )}
+                {film.links.instagram && (
+                  <a href={film.links.instagram} target="_blank" rel="noreferrer" className="font-title font-bold italic text-xl underline decoration-2 decoration-hero hover:text-hero">Instagram</a>
                 )}
               </div>
             )}

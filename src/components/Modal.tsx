@@ -385,6 +385,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, data, cinemaMode, cinema
                             {data.links.pressKit && (
                                 <a href={data.links.pressKit} target="_blank" rel="noreferrer" className="font-title font-bold italic text-xl underline decoration-2 decoration-navy hover:text-navy">Press Kit (PDF)</a>
                             )}
+                            {data.links.instagram && (
+                                <a href={data.links.instagram} target="_blank" rel="noreferrer" className="font-title font-bold italic text-xl underline decoration-2 decoration-hero hover:text-hero">Instagram</a>
+                            )}
                         </div>
                     )}
                 </div>

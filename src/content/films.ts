@@ -49,7 +49,7 @@
        // type: 'national-premiere' | 'international-premiere' | 'premiere'
        //     | 'award' | 'selection'   (label curto: ~35 letras no máximo)
      isStudentProject: false,
-     links: { imdb: '', letterboxd: '', pressKit: '' },
+     links: { imdb: '', letterboxd: '', pressKit: '', instagram: '' },
    },
    ──────────────────────────────────────────────────────────────────────────
    See ./types.ts for what each field means.
@@ -102,7 +102,12 @@ export const films: FilmEntry[] = [
     videoEmbed: "",
     highlights: [],
     isStudentProject: false,
-    links: { imdb: "", letterboxd: "", pressKit: "" },
+    links: {
+      imdb: "",
+      letterboxd: "",
+      pressKit: "",
+      instagram: "https://www.instagram.com/cestoducinema/",
+    },
   },
   // ------------------------------------------------------------------ #1
   {
@@ -148,7 +153,12 @@ export const films: FilmEntry[] = [
     videoEmbed: "",
     highlights: [],
     isStudentProject: false,
-    links: { imdb: "", letterboxd: "", pressKit: "" },
+    links: {
+      imdb: "",
+      letterboxd: "",
+      pressKit: "",
+      instagram: "https://www.instagram.com/cestoducinema/",
+    },
   },
   // ------------------------------------------------------------------ #2
   {
@@ -212,7 +222,12 @@ export const films: FilmEntry[] = [
       },
     ],
     isStudentProject: true,
-    links: { imdb: "", letterboxd: "", pressKit: "" },
+    links: {
+      imdb: "",
+      letterboxd: "",
+      pressKit: "",
+      instagram: "",
+    },
   },
   // ------------------------------------------------------------------ #2
   {
@@ -300,6 +315,7 @@ export const films: FilmEntry[] = [
       imdb: "",
       letterboxd: "https://letterboxd.com/film/i-hear-a-city/",
       pressKit: "",
+      instagram: "https://www.instagram.com/cestoducinema/",
     },
   },
 
@@ -361,7 +377,12 @@ export const films: FilmEntry[] = [
       },
     ],
     isStudentProject: false,
-    links: { imdb: "", letterboxd: "", pressKit: "" },
+    links: {
+      imdb: "",
+      letterboxd: "https://letterboxd.com/film/star-journey/",
+      pressKit: "",
+      instagram: "https://www.instagram.com/cestoducinema/",
+    },
   },
 
   // ------------------------------------------------------------------ #4
@@ -440,7 +461,12 @@ export const films: FilmEntry[] = [
       },
     ],
     isStudentProject: false,
-    links: { imdb: "", letterboxd: "", pressKit: "" },
+    links: {
+      imdb: "",
+      letterboxd: "https://letterboxd.com/film/twenty-twenty-four-2026/",
+      pressKit: "",
+      instagram: "https://www.instagram.com/cestoducinema/",
+    },
   },
 
   // ------------------------------------------------------------------ #5
@@ -488,7 +514,12 @@ export const films: FilmEntry[] = [
     videoEmbed: "",
     highlights: [],
     isStudentProject: false,
-    links: { imdb: "", letterboxd: "", pressKit: "" },
+    links: {
+      imdb: "",
+      letterboxd: "",
+      pressKit: "",
+      instagram: "",
+    },
   },
 
   // ------------------------------------------------------------------ #6
@@ -535,7 +566,12 @@ export const films: FilmEntry[] = [
     videoEmbed: "",
     highlights: [],
     isStudentProject: true,
-    links: { imdb: "", letterboxd: "", pressKit: "" },
+    links: {
+      imdb: "",
+      letterboxd: "",
+      pressKit: "",
+      instagram: "",
+    },
   },
 
   // ------------------------------------------------------------------ #7
@@ -613,9 +649,9 @@ export const films: FilmEntry[] = [
     isStudentProject: true,
     links: {
       imdb: "",
-      letterboxd:
-        "https://letterboxd.com/film/the-night-after-instead-of-the-morning-before/",
+      letterboxd: "https://letterboxd.com/film/the-night-after-instead-of-the-morning-before/",
       pressKit: "",
+      instagram: "",
     },
   },
 
@@ -660,7 +696,12 @@ export const films: FilmEntry[] = [
     videoEmbed: "",
     highlights: [],
     isStudentProject: true,
-    links: { imdb: "", letterboxd: "", pressKit: "" },
+    links: {
+      imdb: "",
+      letterboxd: "",
+      pressKit: "",
+      instagram: "",
+    },
   },
 
   // ------------------------------------------------------------------ #9
@@ -705,7 +746,12 @@ export const films: FilmEntry[] = [
       "https://www.youtube.com/embed/-zMZn-a5kPo?si=RxOA7ID46TIsQaJL&autoplay=1&mute=0",
     highlights: [],
     isStudentProject: true,
-    links: { imdb: "", letterboxd: "", pressKit: "" },
+    links: {
+      imdb: "",
+      letterboxd: "",
+      pressKit: "",
+      instagram: "",
+    },
   },
 
   // ------------------------------------------------------------------ #10
@@ -757,6 +803,11 @@ export const films: FilmEntry[] = [
       "https://www.youtube.com/embed/2OTg8tewwI8?si=7HmtBi_ElH7fJ5I3&autoplay=1&mute=0",
     highlights: [],
     isStudentProject: true,
-    links: { imdb: "", letterboxd: "", pressKit: "" },
+    links: {
+      imdb: "",
+      letterboxd: "",
+      pressKit: "",
+      instagram: "",
+    },
   },
 ];
