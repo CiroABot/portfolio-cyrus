@@ -8,6 +8,7 @@ import { Language, FilmData } from '../../../../types';
 import { SITE_URL, PROFILE_PIC } from '../../../../content/site';
 import ScrollUnlock from '../../../../components/ScrollUnlock';
 import { toPrivacyEmbed } from '../../../../lib/embed';
+import FestivalList from '../../../../components/FestivalList';
 
 /* dynamicParams stays ON so an unknown slug reaches this page, which then
    calls notFound() → renders the styled [lang]/not-found.tsx (not the bare 404). */
@@ -132,19 +133,7 @@ export default async function FilmPage({
               </div>
             )}
 
-            {film.festivals && film.festivals.length > 0 && (
-              <div className="mb-8 bg-white border-2 border-black p-4 shadow-pop-sm">
-                <h2 className="font-bold uppercase border-b-2 border-black mb-3 pb-1">{t.modal_festivals}</h2>
-                <ul className="space-y-2 text-sm font-semibold">
-                  {film.festivals.map((fest, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <span className="text-rose text-lg leading-none">★</span>
-                      <span className="leading-tight">{fest}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            {film.festivals && <FestivalList festivals={film.festivals} t={t} />}
 
             {/* Stills */}
             {stills.length > 0 && (

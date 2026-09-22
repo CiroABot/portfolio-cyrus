@@ -9,9 +9,9 @@
    players, empty spec badges, etc. To change content, edit ./content.
    ========================================================================== */
 
-import { Language, FilmData, TechSpecs, ExternalLinks } from './types';
+import { Language, FilmData, TechSpecs, ExternalLinks, FilmFestival, FilmFestivals } from './types';
 import { films } from './content/films';
-import { Localized, FilmEntry } from './content/types';
+import { Localized, FilmEntry, FestivalEntry } from './content/types';
 import { translations } from './content/ui';
 import { zineImages } from './content/zines';
 import { PROFILE_PIC, SOCIAL_LINKS, DOC_LINKS, CONTACT_EMAIL } from './content/site';
@@ -44,6 +44,25 @@ const cleanLinks = (l: FilmEntry['links']): ExternalLinks | undefined => {
   return Object.keys(out).length ? out : undefined;
 };
 
+/** Resolve one festival list: drop blank lines, premieres first (stable). */
+const cleanFestivalList = (list: FestivalEntry[], lang: Language): FilmFestival[] =>
+  list
+    .filter((f) => f.name.trim())
+    .map((f) => ({
+      name: f.name.trim(),
+      premiere: !!f.premiere,
+      award: f.award && filled(f.award) ? f.award[lang] : undefined,
+      note: f.note && filled(f.note) ? f.note[lang] : undefined,
+    }))
+    .sort((a, b) => Number(b.premiere) - Number(a.premiere));
+
+/** National + international festivals; undefined if the film has none. */
+const cleanFestivals = (f: FilmEntry['festivals'], lang: Language): FilmFestivals | undefined => {
+  const national = cleanFestivalList(f.national, lang);
+  const international = cleanFestivalList(f.international, lang);
+  return national.length || international.length ? { national, international } : undefined;
+};
+
 /** Build the single-language film list the components consume. */
 export const filmsData = (lang: Language): FilmData[] =>
   films.map((f) => ({
@@ -65,6 +84,6 @@ export const filmsData = (lang: Language): FilmData[] =>
     production: filled(f.production) ? f.production[lang] : undefined,
     specs: cleanSpecs(f.specs),
     credits: f.credits.length ? f.credits.map((c) => ({ role: c.role[lang], name: c.name })) : undefined,
-    festivals: f.festivals.length ? f.festivals : undefined,
+    festivals: cleanFestivals(f.festivals, lang),
     links: cleanLinks(f.links),
   }));

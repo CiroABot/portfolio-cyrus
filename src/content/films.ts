@@ -36,10 +36,18 @@
      credits: [
        // { role: { pt: '', en: '' }, name: '' },
      ],
-     festivals: [],
+     festivals: {
+       national: [],                              // festivais no Brasil
+       international: [],                         // festivais no exterior
+       // cada linha: { name: '' }  + opcionais: premiere: true,
+       //   award: { pt: '', en: '' },  note: { pt: '', en: '' }
+     },
 
      videoEmbed: '',                              // YouTube /embed/ url, or ''
-     highlights: [],                              // [{ type: 'award'|'premiere'|'selection', label: { pt: '', en: '' } }]
+     highlights: [],                              // louros — veja o exemplo abaixo
+       // [{ type: 'national-premiere', label: { pt: '', en: '' } }]
+       // type: 'national-premiere' | 'international-premiere' | 'premiere'
+       //     | 'award' | 'selection'   (label curto: ~35 letras no máximo)
      isStudentProject: false,
      links: { imdb: '', letterboxd: '', pressKit: '' },
    },
@@ -89,7 +97,7 @@ export const films: FilmEntry[] = [
       { role: { pt: "Produção", en: "Production" }, name: "Heloísa Schons" },
       { role: { pt: "Co-produção", en: "Co-production" }, name: "Ciro Araujo" },
     ],
-    festivals: [],
+    festivals: { national: [], international: [] },
 
     videoEmbed: "",
     highlights: [],
@@ -135,7 +143,7 @@ export const films: FilmEntry[] = [
         name: "Ciro Araujo",
       },
     ],
-    festivals: [],
+    festivals: { national: [], international: [] },
 
     videoEmbed: "",
     highlights: [],
@@ -186,12 +194,17 @@ export const films: FilmEntry[] = [
         name: "Ciro Araujo",
       }, // { role: { pt: '', en: '' }, name: '' },
     ],
-    festivals: ["15ª Mostra Ecofalante de Cinema"],
+    festivals: {
+      national: [
+        { name: "15ª Mostra Ecofalante de Cinema", premiere: true },
+      ],
+      international: [],
+    },
 
     videoEmbed: "",
     highlights: [
       {
-        type: "premiere",
+        type: "national-premiere",
         label: {
           pt: "15ª Mostra Ecofalante",
           en: "15th Ecofalante Film Festival",
@@ -250,24 +263,35 @@ export const films: FilmEntry[] = [
       },
       { role: { pt: "Montagem", en: "Editing" }, name: "Ciro Araujo" },
     ],
-    festivals: [
-      "36th Onion City Experimental Film Festival",
-      "1º Festival de Cine Desde las Vísceras",
-      "13è GOLLUT - Festival de cinema a Ribes de Freser",
-      "5º Festival Internacional de Cinema de Itabaiana — Estreia Nacional / National Premiere",
-      "2º Festival Silenzio",
-      "9th Short Focus Film Festival",
-      "9ª Mostra SESC de Cinema",
-    ],
+    festivals: {
+      national: [
+        { name: "5º Festival Internacional de Cinema de Itabaiana", premiere: true },
+        { name: "9ª Mostra SESC de Cinema" },
+      ],
+      international: [
+        { name: "36th Onion City Experimental Film Festival", premiere: true },
+        { name: "1º Festival de Cine Desde las Vísceras" },
+        { name: "13è GOLLUT - Festival de cinema a Ribes de Freser" },
+        { name: "2º Festival Silenzio" },
+        { name: "9th Short Focus Film Festival" },
+      ],
+    },
 
     videoEmbed:
       "https://www.youtube.com/embed/g_cDyn_EN0M?si=67LARl6ym7AmzLc1&autoplay=1&mute=0",
     highlights: [
       {
-        type: "premiere",
+        type: "international-premiere",
         label: {
           pt: "36th Onion City Film Festival",
           en: "36th Onion City Film Festival",
+        },
+      },
+      {
+        type: "national-premiere",
+        label: {
+          pt: "5º Festival de Itabaiana",
+          en: "5th Itabaiana Film Festival",
         },
       },
     ],
@@ -319,12 +343,17 @@ export const films: FilmEntry[] = [
       },
       { role: { pt: "Finalização", en: "Color & VFX" }, name: "Ciro Araujo" },
     ],
-    festivals: ["59º Festival de Brasília do Cinema Brasileiro"],
+    festivals: {
+      national: [
+        { name: "59º Festival de Brasília do Cinema Brasileiro", premiere: true },
+      ],
+      international: [],
+    },
 
     videoEmbed: "",
     highlights: [
       {
-        type: "premiere",
+        type: "national-premiere",
         label: {
           pt: "59º Festival de Brasília",
           en: "59th Brasília Film Festival",
@@ -378,25 +407,36 @@ export const films: FilmEntry[] = [
       },
       { role: { pt: "Finalização", en: "Color & VFX" }, name: "Ciro Araujo" },
     ],
-    festivals: [
-      "29ª Mostra de Tiradentes",
-      "1º Festival Internacional de Cinema de Alegre",
-      "16º FICUNAM — Estreia Internacional / International Premiere",
-      "59º Festival de Brasília do Cinema Brasileiro — Mostra Competitiva Brasília",
-      "37º Kinoforum",
-      "10º Festival Ecrã",
-      "15ª Mostra de Cinema e Direitos Humanos",
-      "5º Citronela Doc - Festival de Documentários de Ilhabela",
-    ],
+    festivals: {
+      national: [
+        { name: "29ª Mostra de Tiradentes", premiere: true },
+        { name: "1º Festival Internacional de Cinema de Alegre" },
+        {
+          name: "59º Festival de Brasília do Cinema Brasileiro",
+          note: { pt: "Mostra Competitiva Brasília", en: "Brasília Competitive Section" },
+        },
+        { name: "37º Kinoforum" },
+        { name: "10º Festival Ecrã" },
+        { name: "15ª Mostra de Cinema e Direitos Humanos" },
+        { name: "5º Citronela Doc - Festival de Documentários de Ilhabela" },
+      ],
+      international: [
+        { name: "16º FICUNAM", premiere: true },
+      ],
+    },
 
     videoEmbed: "",
     highlights: [
       {
-        type: "premiere",
+        type: "national-premiere",
         label: {
           pt: "29ª Mostra de Tiradentes",
           en: "29th Tiradentes Film Festival",
         },
+      },
+      {
+        type: "international-premiere",
+        label: { pt: "16º FICUNAM", en: "16th FICUNAM" },
       },
     ],
     isStudentProject: false,
@@ -443,7 +483,7 @@ export const films: FilmEntry[] = [
         name: "Ciro Araujo & Umberto Martins",
       },
     ],
-    festivals: [],
+    festivals: { national: [], international: [] },
 
     videoEmbed: "",
     highlights: [],
@@ -490,7 +530,7 @@ export const films: FilmEntry[] = [
       },
       { role: { pt: "2º AD", en: "2nd AD" }, name: "Ciro Araujo" },
     ],
-    festivals: [],
+    festivals: { national: [], international: [] },
 
     videoEmbed: "",
     highlights: [],
@@ -543,12 +583,21 @@ export const films: FilmEntry[] = [
       { role: { pt: "1º AD", en: "1st AD" }, name: "Ciro Araujo" },
       { role: { pt: "VFX", en: "VFX" }, name: "Ciro Araujo" },
     ],
-    festivals: [
-      "Short Way International Short Film Festival 2023 (São Paulo, Brasil) - Prêmio de Melhor Cinematografia",
-      "13º Festival Internacional de Cinema de Balneário Camboriú (Balneário Camboriú, Brasil)",
-      "6º MOV Festival - Festival Internacional de Cinema Universitário de Recife (Recife, Brasil)",
-      "17º Festival de Taguá - Seletiva Popular (Brasília, Brasil)",
-    ],
+    festivals: {
+      national: [
+        {
+          name: "Short Way International Short Film Festival 2023 (São Paulo)",
+          award: { pt: "Melhor Fotografia", en: "Best Cinematography" },
+        },
+        { name: "13º Festival Internacional de Cinema de Balneário Camboriú" },
+        { name: "6º MOV Festival - Festival Internacional de Cinema Universitário de Recife" },
+        {
+          name: "17º Festival de Taguá (Brasília)",
+          note: { pt: "Seletiva Popular", en: "Popular Selection" },
+        },
+      ],
+      international: [],
+    },
 
     videoEmbed:
       "https://www.youtube.com/embed/Ip0JTLWRIG8?si=ul0F9cKnnxUNs4zn&autoplay=1&mute=0",
@@ -606,7 +655,7 @@ export const films: FilmEntry[] = [
       color: "Cor / Color",
     },
     credits: [{ role: { pt: "Direção", en: "Director" }, name: "Ciro Araujo" }],
-    festivals: [],
+    festivals: { national: [], international: [] },
 
     videoEmbed: "",
     highlights: [],
@@ -650,7 +699,7 @@ export const films: FilmEntry[] = [
       color: "Cor / Color",
     },
     credits: [{ role: { pt: "Direção", en: "Director" }, name: "Ciro Araujo" }],
-    festivals: [],
+    festivals: { national: [], international: [] },
 
     videoEmbed:
       "https://www.youtube.com/embed/-zMZn-a5kPo?si=RxOA7ID46TIsQaJL&autoplay=1&mute=0",
@@ -702,7 +751,7 @@ export const films: FilmEntry[] = [
       { role: { pt: "Direção de Fotografia", en: "DOP" }, name: "Ciro Araujo" },
       { role: { pt: "Montagem", en: "Editing" }, name: "Ciro Araujo" },
     ],
-    festivals: [],
+    festivals: { national: [], international: [] },
 
     videoEmbed:
       "https://www.youtube.com/embed/2OTg8tewwI8?si=7HmtBi_ElH7fJ5I3&autoplay=1&mute=0",

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Image from 'next/image';
 import { useLanguage } from '../LanguageContext';
 import { filmsData } from '../data';
-import { FilmData, FilmCategory, FilmHighlight, HighlightType } from '../types';
+import { FilmData, FilmCategory, FilmHighlight, HighlightType, Content } from '../types';
 
 interface FilmsProps {
   onOpenModal: (film: FilmData) => void;
@@ -67,21 +67,26 @@ const normalize = (s: string): string =>
 // A real laurel wreath (public/assets/Laurel_Wreath.svg) framing the festival
 // name in the centre. Rendered WHITE with a dark outline (the subtitle trick)
 // so it stays legible over any photo — grid view AND list view.
-const HL_KICKER: Record<HighlightType, 'hl_award' | 'hl_premiere' | 'hl_selection'> = {
+const HL_KICKER: Record<HighlightType, keyof Content> = {
     award: 'hl_award',
     premiere: 'hl_premiere',
+    'national-premiere': 'hl_premiere_national',
+    'international-premiere': 'hl_premiere_international',
     selection: 'hl_selection',
 };
 
 const LAUREL_OUTLINE =
     '[filter:invert(1)_drop-shadow(0_0_1px_rgba(0,0,0,0.95))_drop-shadow(0_0_1px_rgba(0,0,0,0.95))]';
 
-const LaurelHighlight: React.FC<{ highlight: FilmHighlight; size?: 'sm' | 'md'; t: any }> = ({ highlight, size = 'md', t }) => {
+// `stacked` = grid card with 2+ laurels (e.g. national + international premiere):
+// slightly smaller wreaths stacked tight, like the laurel column on a film poster,
+// so they don't swallow the cover image.
+const LaurelHighlight: React.FC<{ highlight: FilmHighlight; size?: 'sm' | 'md'; stacked?: boolean; t: any }> = ({ highlight, size = 'md', stacked = false, t }) => {
     const sm = size === 'sm';
     const kicker = t[HL_KICKER[highlight.type]];
     return (
         <span
-            className={`relative inline-flex shrink-0 items-center justify-center select-none ${sm ? 'w-[120px] h-[66px]' : 'w-[128px] h-[72px]'}`}
+            className={`relative inline-flex shrink-0 items-center justify-center select-none ${sm ? 'w-[120px] h-[66px]' : stacked ? 'w-[112px] h-[61px]' : 'w-[128px] h-[72px]'}`}
             title={`${kicker} — ${highlight.label}`}
         >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -225,9 +230,9 @@ const FilmCard: React.FC<{ film: FilmData; index: number; onOpenModal: (f: FilmD
 
                 {/* HIGHLIGHT BADGES (award / premiere / selection) — top left */}
                 {film.highlights && film.highlights.length > 0 && (
-                    <div className="absolute top-2 left-2 z-[30] flex flex-col items-start gap-1.5 max-w-[calc(100%-1rem)] pointer-events-none">
+                    <div className={`absolute top-2 left-2 z-[30] flex flex-col items-start max-w-[calc(100%-1rem)] pointer-events-none ${film.highlights.length > 1 ? 'gap-0' : 'gap-1.5'}`}>
                         {film.highlights.map((h, i) => (
-                            <LaurelHighlight key={i} highlight={h} size="md" t={t} />
+                            <LaurelHighlight key={i} highlight={h} size="md" stacked={film.highlights.length > 1} t={t} />
                         ))}
                     </div>
                 )}
@@ -420,6 +425,9 @@ const Films: React.FC<FilmsProps> = ({ onOpenModal }) => {
             film.production ?? '',
             (film.credits ?? []).map((c) => `${c.name} ${c.role}`).join(' '),
             (film.highlights ?? []).map((h) => h.label).join(' '),
+            [...(film.festivals?.national ?? []), ...(film.festivals?.international ?? [])]
+              .map((f) => `${f.name} ${f.award ?? ''} ${f.note ?? ''}`)
+              .join(' '),
           ].join(' ')
         );
         if (!tokens.every((tok) => haystack.includes(tok))) return false;

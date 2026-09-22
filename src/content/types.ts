@@ -45,10 +45,36 @@ export interface FilmLinks {
 }
 
 export interface Highlight {
-  /** 'award' = prize won · 'premiere' = notable premiere · 'selection' = official selection. */
+  /** The laurel's kicker:
+      'national-premiere'      → ESTREIA NACIONAL / BRAZILIAN PREMIERE
+      'international-premiere' → ESTREIA INTERNACIONAL / INTERNATIONAL PREMIERE
+      'premiere'               → ESTREIA / PREMIERE (generic)
+      'award'                  → PRÊMIO / AWARD
+      'selection'              → SELEÇÃO / SELECTION
+      A film can have several laurels (e.g. a national AND an international premiere). */
   type: HighlightType;
-  /** Short label shown on the badge, e.g. { pt: '29ª Mostra de Tiradentes', en: '...' }. */
+  /** SHORT label inside the laurel (~35 characters max, or it gets cut),
+      e.g. { pt: '29ª Mostra de Tiradentes', en: '29th Tiradentes Film Festival' }. */
   label: Localized;
+}
+
+/** One festival where the film screened. Only `name` is required. */
+export interface FestivalEntry {
+  /** Festival name, kept as written, e.g. "29ª Mostra de Tiradentes". */
+  name: string;
+  /** true = the film premiered here. Shown as ESTREIA NACIONAL or
+      ESTREIA INTERNACIONAL depending on the list it's in. */
+  premiere?: boolean;
+  /** A prize won here, e.g. { pt: 'Melhor Fotografia', en: 'Best Cinematography' }. */
+  award?: Localized;
+  /** Section / showcase / extra info, e.g. { pt: 'Mostra Competitiva', en: 'Competitive Section' }. */
+  note?: Localized;
+}
+
+/** Festivals split in two lists: in Brazil (national) and abroad (international). */
+export interface FilmFestivals {
+  national: FestivalEntry[];
+  international: FestivalEntry[];
 }
 
 export interface FilmEntry {
@@ -85,8 +111,10 @@ export interface FilmEntry {
   specs: FilmSpecs;
   /** Crew list. Leave [] if none. */
   credits: FilmCredit[];
-  /** Festival / award lines, kept as written. Leave [] if none. */
-  festivals: string[];
+  /** Festivals, split into Brazil (national) and abroad (international).
+      Leave { national: [], international: [] } if none. Premieres are listed
+      first automatically. */
+  festivals: FilmFestivals;
 
   // ——— MEDIA & EXTRAS ———
   /** YouTube/Vimeo EMBED url (the /embed/ form). Leave '' for no video. */

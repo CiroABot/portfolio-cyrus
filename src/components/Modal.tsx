@@ -7,6 +7,7 @@ import { FilmData } from '../types';
 import { useLanguage } from '../LanguageContext';
 import { useSwipeNav } from '../lib/useSwipeNav';
 import { toPrivacyEmbed } from '../lib/embed';
+import FestivalList from './FestivalList';
 
 interface ModalProps {
   isOpen: boolean;
@@ -317,18 +318,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, data, cinemaMode, cinema
                     )}
 
                     {/* Festivals */}
-                    {data.festivals && data.festivals.length > 0 && (
-                        <div className="mb-8 bg-gray-50 border-2 border-black p-4 shadow-pop-sm">
-                            <h4 className="font-bold uppercase border-b-2 border-black mb-3 pb-1">{t.modal_festivals}</h4>
-                            <ul className="space-y-2 text-sm font-semibold">
-                                {data.festivals.map((fest, i) => (
-                                    <li key={i} className="flex items-start gap-2">
-                                        <span className="text-rose text-lg leading-none">★</span>
-                                        <span className="leading-tight">{fest}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
+                    {data.festivals && (
+                        <FestivalList festivals={data.festivals} t={t} className="bg-gray-50" headingLevel="h4" />
                     )}
 
                     {/* Crew List (Credits) */}

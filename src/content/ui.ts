@@ -51,7 +51,12 @@ export const translations: Record<'pt' | 'en', Content> = {
     no_results: '[ NENHUM SINAL DETECTADO NESTA FREQUÊNCIA ]',
     hl_award: 'PRÊMIO',
     hl_premiere: 'ESTREIA',
+    hl_premiere_national: 'ESTREIA NACIONAL',
+    hl_premiere_international: 'ESTREIA INTERNACIONAL',
     hl_selection: 'SELEÇÃO',
+    fest_national: 'NACIONAIS',
+    fest_international: 'INTERNACIONAIS',
+    fest_award: 'PRÊMIO',
 
     // STATUS & STAMPS
     status_pre: 'EM PRÉ-PRODUÇÃO',
@@ -139,7 +144,12 @@ export const translations: Record<'pt' | 'en', Content> = {
     no_results: '[ NO SIGNAL DETECTED FOR THIS FREQUENCY ]',
     hl_award: 'AWARD',
     hl_premiere: 'PREMIERE',
+    hl_premiere_national: 'BRAZILIAN PREMIERE',
+    hl_premiere_international: 'INTERNATIONAL PREMIERE',
     hl_selection: 'SELECTION',
+    fest_national: 'BRAZIL',
+    fest_international: 'INTERNATIONAL',
+    fest_award: 'AWARD',
 
     // STATUS & STAMPS
     status_pre: 'IN PRE-PRODUCTION',

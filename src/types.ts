@@ -6,9 +6,15 @@ export type Language = 'pt' | 'en';
     for portfolio filtering. A film can belong to several at once. */
 export type FilmCategory = 'dir' | 'photo' | 'edit' | 'script' | 'assist' | 'prod';
 
-/** A spotlight shown as a badge on the film: an award won, a notable premiere,
-    or an official selection. (A premiere can matter more than a minor award.) */
-export type HighlightType = 'award' | 'premiere' | 'selection';
+/** A spotlight shown as a laurel on the film: an award won, a notable premiere
+    (national = first screening in Brazil, international = first abroad), or an
+    official selection. (A premiere can matter more than a minor award.) */
+export type HighlightType =
+  | 'award'
+  | 'premiere'
+  | 'national-premiere'
+  | 'international-premiere'
+  | 'selection';
 export interface FilmHighlight {
   type: HighlightType;
   label: string;
@@ -77,7 +83,13 @@ export interface Content {
   // Highlight badge kickers
   hl_award: string;
   hl_premiere: string;
+  hl_premiere_national: string;
+  hl_premiere_international: string;
   hl_selection: string;
+  // Festival list (modal + film page)
+  fest_national: string;
+  fest_international: string;
+  fest_award: string;
 
   // Status & Stamps
   status_pre: string;
@@ -174,10 +186,24 @@ export interface FilmData {
   directorStatement?: string;
   specs?: TechSpecs;
   credits?: Credit[];
-  festivals?: string[];
+  festivals?: FilmFestivals;
   stills?: string[];
   links?: ExternalLinks;
   production?: string; 
+}
+
+/** One festival line, resolved to the active language. */
+export interface FilmFestival {
+  name: string;
+  premiere: boolean;
+  award?: string;
+  note?: string;
+}
+
+/** Festivals split by where they happen. Either list may be empty. */
+export interface FilmFestivals {
+  national: FilmFestival[];
+  international: FilmFestival[];
 }
 
 export interface ProjectData {
