@@ -254,6 +254,10 @@ export const films: FilmEntry[] = [
       "36th Onion City Experimental Film Festival",
       "1º Festival de Cine Desde las Vísceras",
       "13è GOLLUT - Festival de cinema a Ribes de Freser",
+      "5º Festival Internacional de Cinema de Itabaiana — Estreia Nacional / National Premiere",
+      "2º Festival Silenzio",
+      "9th Short Focus Film Festival",
+      "9ª Mostra SESC de Cinema",
     ],
 
     videoEmbed:
@@ -315,10 +319,18 @@ export const films: FilmEntry[] = [
       },
       { role: { pt: "Finalização", en: "Color & VFX" }, name: "Ciro Araujo" },
     ],
-    festivals: [],
+    festivals: ["59º Festival de Brasília do Cinema Brasileiro"],
 
     videoEmbed: "",
-    highlights: [],
+    highlights: [
+      {
+        type: "premiere",
+        label: {
+          pt: "59º Festival de Brasília",
+          en: "59th Brasília Film Festival",
+        },
+      },
+    ],
     isStudentProject: false,
     links: { imdb: "", letterboxd: "", pressKit: "" },
   },
@@ -369,6 +381,12 @@ export const films: FilmEntry[] = [
     festivals: [
       "29ª Mostra de Tiradentes",
       "1º Festival Internacional de Cinema de Alegre",
+      "16º FICUNAM — Estreia Internacional / International Premiere",
+      "59º Festival de Brasília do Cinema Brasileiro — Mostra Competitiva Brasília",
+      "37º Kinoforum",
+      "10º Festival Ecrã",
+      "15ª Mostra de Cinema e Direitos Humanos",
+      "5º Citronela Doc - Festival de Documentários de Ilhabela",
     ],
 
     videoEmbed: "",
